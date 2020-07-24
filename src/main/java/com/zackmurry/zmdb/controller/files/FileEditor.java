@@ -105,6 +105,21 @@ public class FileEditor {
         return 1;
     }
 
+    /**
+     * Writes to a file without any logging nor return values. Useful for writing to the log.txt file
+     * @param text text to write
+     * @param file file to write to
+     */
+    public static void silentWriteToFile(String text, File file) {
+        try {
+            FileWriter myWriter = new FileWriter(file, true);
+            myWriter.write(text);
+            myWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static int writeToColumn(String text, String databaseName, String tableName, String columnName) {
         File file = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName);
         if(!file.exists()) {
