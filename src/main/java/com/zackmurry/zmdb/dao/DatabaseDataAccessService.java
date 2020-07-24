@@ -19,9 +19,7 @@ import java.util.stream.Collectors;
  *
  * reserved words:
  *
- * count
- * boolean
- * String
+ * contains
  *
  *
  */
@@ -163,6 +161,18 @@ public class DatabaseDataAccessService implements DatabaseDao {
         }
         Table table = optionalTable.get();
         return table.getColumnByName(columnName);
+    }
+
+    @Override
+    public boolean tableContains(String databaseName, String tableName, ArrayList<Object> data) {
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Cannot check for row in table " + tableName + " in database " + databaseName + " because the table couldn't be found.");
+            return false;
+        }
+        Table table = optionalTable.get();
+        return table.containsRow(data);
+
     }
 
 

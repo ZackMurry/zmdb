@@ -91,4 +91,21 @@ public class Column<T> {
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
     }
+
+    /**
+     * @param data
+     * @return -1 for no, else returns index of element where it is first found
+     */
+    public int containsElement(Object data) {
+        for (int i = 0; i < rows.size(); i++) {
+            if(rows.get(i).equals(data)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public boolean elementAtIndexEquals(int index, Object element) {
+        return rows.get(index).equals(element);
+    }
 }

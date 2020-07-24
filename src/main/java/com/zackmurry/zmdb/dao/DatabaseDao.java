@@ -34,4 +34,6 @@ public interface DatabaseDao {
 
     Optional<Column<?>> getColumn(String databaseName, String tableName, String columnName);
 
+    boolean tableContains(String databaseName, String tableName, ArrayList<Object> data);
+
 }

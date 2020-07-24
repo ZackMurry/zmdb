@@ -2,6 +2,7 @@ package com.zackmurry.zmdb.services;
 
 import com.zackmurry.zmdb.ZmdbLogger;
 import com.zackmurry.zmdb.controller.files.FileEditor;
+import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.dao.DatabaseDao;
 import com.zackmurry.zmdb.dao.DatabaseDataAccessService;
 import com.zackmurry.zmdb.entities.Column;
@@ -46,7 +47,10 @@ public class DatabaseService {
     }
 
     public int addTable(Table table, String databaseName) {
-        return databaseDao.addTable(table, databaseName);
+        if(databaseDao.addTable(table, databaseName) == 1) {
+            return fileEditor.newTableFile(databaseName, table.getName());
+        }
+        return 0;
     }
 
     public int includeTable(Table table, String databaseName) {
@@ -238,5 +242,8 @@ public class DatabaseService {
         return optionalColumn.get();
     }
 
+    public boolean tableContains(String databaseName, String tableName, ArrayList<Object> data) {
+        return databaseDao.tableContains(databaseName, tableName, data);
+    }
 
 }

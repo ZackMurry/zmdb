@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * not done:
- * rows
- *
- *
+ * password encoding
+ * put mapping
+ * validating if a row with certain details exists
  *
  */
 

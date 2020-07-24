@@ -19,7 +19,7 @@ public class ZmdbLogger {
         File logFile = new File("log.txt");
         if(!logFile.exists()) {
             try {
-                logFile.createNewFile();
+                logFile.createNewFile(); //todo maybe do something about this warning
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -83,4 +83,9 @@ public class DatabaseController {
         return databaseService.getColumnByName(databaseName, tableName, columnName);
     }
 
+    @GetMapping("/databases/{databaseName}/tables/{tableName}/contains")
+    public boolean tableContains(@PathVariable(name="databaseName") String databaseName, @PathVariable(name="tableName") String tableName, @RequestBody ProtoRow protoRow) {
+        return databaseService.tableContains(databaseName, tableName, protoRow.getData());
+    }
+
 }

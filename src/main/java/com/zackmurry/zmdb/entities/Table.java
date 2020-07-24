@@ -10,7 +10,8 @@ public class Table {
 
     private String name;
 
-    private List<Column<?>> columns = new ArrayList<>();
+    private List<Column<?>> columns = new ArrayList<>(); //the first added column is the index and each element must be unique todo: implement
+    //todo allow changing of the index column
 
     public Table(String name, Column<?>... columns) {
         this.name = name;
@@ -81,6 +82,17 @@ public class Table {
             }
         }
         return out;
+    }
+
+    public boolean containsRow(ArrayList<Object> data) {
+        if(columns.size() < 1) return false;
+        Column<?> indexColumn = columns.get(0); //change 0 to var
+        int index = indexColumn.containsElement(data.get(0));
+        if(index < 0) return false;
+        for (int i = 1; i < data.size(); i++) {
+            if(!columns.get(i).elementAtIndexEquals(index, data.get(i))) return false;
+        }
+        return true;
     }
 
 }
