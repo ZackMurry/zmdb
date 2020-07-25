@@ -42,6 +42,7 @@ public class DatabaseDataAccessService implements DatabaseDao {
             return OPERATION_FAIL_VALUE;
         }
         databases.add(database);
+        ZmdbLogger.log("Added database " + database.getName() + ".");
         return OPERATION_SUCCESS_VALUE;
     }
 
@@ -69,6 +70,7 @@ public class DatabaseDataAccessService implements DatabaseDao {
         }
 
         database.addTable(table);
+        ZmdbLogger.log("Added table " + table.getName() + " in database " + databaseName + ".");
         return OPERATION_SUCCESS_VALUE;
     }
 

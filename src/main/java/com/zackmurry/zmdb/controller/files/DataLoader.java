@@ -2,15 +2,10 @@ package com.zackmurry.zmdb.controller.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoColumn;
-import com.zackmurry.zmdb.dao.DatabaseDataAccessService;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.entities.Table;
 import com.zackmurry.zmdb.services.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -71,7 +66,7 @@ public class DataLoader {
 
                     for (File columnFile : columnFiles) {
 
-                        String firstLine = FileReader.readFirstLine(columnFile); //getting the first line of columnFile (first line is where type info is stored)
+                        String firstLine = FileReading.readFirstLine(columnFile); //getting the first line of columnFile (first line is where type info is stored)
 
                         if (firstLine.contains("@Type=")) {
                             firstLine = firstLine.substring(6); //cut the @Type= off
@@ -85,7 +80,7 @@ public class DataLoader {
 
 
                         //reading rows of columns
-                        String[] rows = FileReader.getAllLinesButFirst(columnFile).split(FileEditor.VALUE_SEPARATOR);
+                        String[] rows = FileReading.getAllLinesButFirst(columnFile).split(FileEditor.VALUE_SEPARATOR);
                         for (String row : rows) {
                             if(row.equals(" ")) continue;
                             while(row.startsWith(" ")) row = row.substring(1);

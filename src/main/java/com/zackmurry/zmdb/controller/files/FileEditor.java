@@ -2,9 +2,7 @@ package com.zackmurry.zmdb.controller.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class FileEditor {
 
@@ -120,6 +118,27 @@ public class FileEditor {
         }
     }
 
+    public static int silentWriteToStartOfFile(String text, File file) {
+        try{
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            StringBuilder fileText = new StringBuilder();
+            while(true) {
+                String readLine = br.readLine();
+                if(readLine == null) break;
+                fileText.append(readLine).append("\n");
+            }
+            return silentReplaceFileText(text + fileText.toString(), file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+
+
+
+    }
+
     public static int writeToColumn(String text, String databaseName, String tableName, String columnName) {
         File file = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName);
         if(!file.exists()) {
@@ -136,6 +155,18 @@ public class FileEditor {
             fw.close();
             return 1;
         } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public static int silentReplaceFileText(String text, File file) {
+        try {
+            FileWriter myWriter = new FileWriter(file);
+            myWriter.write(text);
+            myWriter.close();
+            return 1;
+        } catch (IOException e) {
             e.printStackTrace();
             return 0;
         }

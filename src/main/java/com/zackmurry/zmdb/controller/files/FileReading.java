@@ -7,7 +7,7 @@ import java.util.Scanner;
 /**
  * shout out: https://www.w3schools.com/java/java_files_read.asp
  */
-public class FileReader {
+public class FileReading {
 
     public String readFile(File file) {
         StringBuilder out = new StringBuilder();

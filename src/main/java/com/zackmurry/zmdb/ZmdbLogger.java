@@ -30,7 +30,7 @@ public class ZmdbLogger {
         String time = sdf.format(new Date());
 
         //todo: probably want to write to the start of the file
-        FileEditor.silentWriteToFile(text + " | " + time + "\n", logFile);
+        FileEditor.silentWriteToStartOfFile(text + " | " + time + "\n", logFile);
 
     }
 
