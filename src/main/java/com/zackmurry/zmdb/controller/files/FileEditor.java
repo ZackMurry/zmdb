@@ -129,5 +129,17 @@ public class FileEditor {
         return writeToFile(text + VALUE_SEPARATOR, file);
     }
 
+    public static int silentRemoveAllTextFromFile(File file) {
+        try {
+            FileWriter fw = new FileWriter(file);
+            fw.write(""); //since append mode is off, it just sets the text to ""
+            fw.close();
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 
 }

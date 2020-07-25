@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * password encoding
  * put mapping
  * validating if a row with certain details exists
+ * deleting dbs/tables/columns/rows
  *
  */
 
