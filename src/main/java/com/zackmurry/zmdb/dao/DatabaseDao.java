@@ -38,4 +38,6 @@ public interface DatabaseDao {
 
     int deleteDatabaseByName(String databaseName);
 
+    int deleteTableByName(String databaseName, String tableName);
+
 }

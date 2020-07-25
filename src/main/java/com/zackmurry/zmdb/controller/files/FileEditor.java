@@ -186,6 +186,22 @@ public class FileEditor {
         }
     }
 
+    public static int deleteTableFile(String databaseName, String tableName) {
+        File file = new File("data/databases/" + databaseName + "/" + tableName);
+        if(!file.exists()) {
+            ZmdbLogger.log("Could not delete table " + tableName + " in database " + databaseName + " because the file could not be found.");
+            return 0;
+        }
+        try{
+            FileUtils.deleteDirectory(file);
+            return 1;
+        } catch (Exception e) {
+            ZmdbLogger.log("Error while deleting directory of database " + databaseName + ".");
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 
 
 }

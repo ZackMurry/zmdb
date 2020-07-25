@@ -93,4 +93,9 @@ public class DatabaseController {
         return databaseService.deleteDatabaseByName(databaseName);
     }
 
+    @DeleteMapping("/databases/{databaseName}/tables/{tableName}")
+    public int deleteTableByName(@PathVariable(name="databaseName") String databaseName, @PathVariable(name="tableName") String tableName) {
+        return databaseService.deleteTableByName(databaseName, tableName);
+    }
+
 }

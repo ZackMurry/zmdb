@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -249,6 +250,11 @@ public class DatabaseService {
     public int deleteDatabaseByName(String databaseName) {
         if(FileEditor.deleteDatabaseFile(databaseName) == 0) return 0;
         return databaseDao.deleteDatabaseByName(databaseName);
+    }
+
+    public int deleteTableByName(String databaseName, String tableName) {
+        if(FileEditor.deleteTableFile(databaseName, tableName) == 0) return 0;
+        return databaseDao.deleteTableByName(databaseName, tableName);
     }
 
 }
