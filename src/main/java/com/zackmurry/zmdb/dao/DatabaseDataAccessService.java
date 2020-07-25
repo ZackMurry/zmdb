@@ -177,5 +177,16 @@ public class DatabaseDataAccessService implements DatabaseDao {
 
     }
 
+    @Override
+    public int deleteDatabaseByName(String databaseName) {
+        Optional<Database> optionalDatabase = databases.stream().filter(database -> database.getName().equals(databaseName)).findFirst();
+        if(optionalDatabase.isEmpty()) {
+            ZmdbLogger.log("Couldn't delete database " + databaseName + " because it couldn't be found.");
+            return 0;
+        }
+        databases.remove(optionalDatabase.get());
+        return 1;
+    }
+
 
 }

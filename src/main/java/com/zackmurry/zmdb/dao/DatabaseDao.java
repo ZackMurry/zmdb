@@ -36,4 +36,6 @@ public interface DatabaseDao {
 
     boolean tableContains(String databaseName, String tableName, ArrayList<Object> data);
 
+    int deleteDatabaseByName(String databaseName);
+
 }

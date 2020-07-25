@@ -29,7 +29,6 @@ public class ZmdbLogger {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String time = sdf.format(new Date());
 
-        //todo: probably want to write to the start of the file
         FileEditor.silentWriteToStartOfFile(text + " | " + time + "\n", logFile);
 
     }

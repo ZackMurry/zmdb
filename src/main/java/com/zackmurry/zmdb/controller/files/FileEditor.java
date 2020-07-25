@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.controller.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 import java.io.*;
 
@@ -134,9 +135,6 @@ public class FileEditor {
             return 0;
         }
 
-
-
-
     }
 
     public static int writeToColumn(String text, String databaseName, String tableName, String columnName) {
@@ -171,6 +169,23 @@ public class FileEditor {
             return 0;
         }
     }
+
+    public static int deleteDatabaseFile(String databaseName) {
+        File file = new File("data/databases/" + databaseName);
+        if(!file.exists()) {
+            ZmdbLogger.log("Could not delete database " + databaseName + " because the file could not be found.");
+            return 0;
+        }
+        try{
+            FileUtils.deleteDirectory(file);
+            return 1;
+        } catch (Exception e) {
+            ZmdbLogger.log("Error while deleting directory of database " + databaseName + ".");
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 
 
 }

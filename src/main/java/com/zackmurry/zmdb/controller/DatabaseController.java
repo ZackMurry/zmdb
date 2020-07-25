@@ -88,4 +88,9 @@ public class DatabaseController {
         return databaseService.tableContains(databaseName, tableName, protoRow.getData());
     }
 
+    @DeleteMapping("/databases/{databaseName}")
+    public int deleteDatabaseByName(@PathVariable(name="databaseName") String databaseName) {
+        return databaseService.deleteDatabaseByName(databaseName);
+    }
+
 }

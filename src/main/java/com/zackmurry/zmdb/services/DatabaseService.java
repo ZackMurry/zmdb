@@ -246,4 +246,9 @@ public class DatabaseService {
         return databaseDao.tableContains(databaseName, tableName, data);
     }
 
+    public int deleteDatabaseByName(String databaseName) {
+        if(FileEditor.deleteDatabaseFile(databaseName) == 0) return 0;
+        return databaseDao.deleteDatabaseByName(databaseName);
+    }
+
 }
