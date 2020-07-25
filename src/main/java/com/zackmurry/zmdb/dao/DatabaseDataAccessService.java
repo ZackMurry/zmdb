@@ -192,10 +192,26 @@ public class DatabaseDataAccessService implements DatabaseDao {
     public int deleteTableByName(String databaseName, String tableName) {
         Optional<Database> optionalDatabase = getDatabaseByName(databaseName);
         if(optionalDatabase.isEmpty()) {
-            ZmdbLogger.log("Couldn't delete table " + tableName + " in database " + databaseName + " because it couldn't be found.");
+            ZmdbLogger.log("Couldn't delete table " + tableName + " in database " + databaseName + " because the database couldn't be found.");
             return 0;
         }
         optionalDatabase.get().removeTable(tableName);
+        return 1;
+    }
+
+    @Override
+    public int deleteColumnByName(String databaseName, String tableName, String columnName) {
+        Optional<Database> optionalDatabase = getDatabaseByName(databaseName);
+        if(optionalDatabase.isEmpty()) {
+            ZmdbLogger.log("Couldn't delete column " + columnName + " in table " + tableName + " in database " + databaseName + " because the database could not be found.");
+            return 0;
+        }
+        Optional<Table> optionalTable = optionalDatabase.get().getTable(tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Couldn't delete column " + columnName + " in table " + tableName + " in database " + databaseName + " because the table could not be found.");
+            return 0;
+        }
+        optionalTable.get().removeColumn(columnName);
         return 1;
     }
 

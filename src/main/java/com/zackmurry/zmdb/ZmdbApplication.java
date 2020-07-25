@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * deleting dbs/tables/columns/rows
  * changing index column
  * delete all databases/tables/columns
+ * delete column by type
  *
  */
 

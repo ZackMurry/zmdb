@@ -98,4 +98,8 @@ public class DatabaseController {
         return databaseService.deleteTableByName(databaseName, tableName);
     }
 
+    @DeleteMapping("/databases/{databaseName}/tables/{tableName}/columns/{columnName}")
+    public int deleteColumnByName(@PathVariable(name="databaseName") String databaseName, @PathVariable(name="tableName") String tableName, @PathVariable(name="columnName") String columnName) {
+        return databaseService.deleteColumnByName(databaseName, tableName, columnName);
+    }
 }

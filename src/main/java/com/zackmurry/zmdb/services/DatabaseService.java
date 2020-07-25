@@ -257,4 +257,9 @@ public class DatabaseService {
         return databaseDao.deleteTableByName(databaseName, tableName);
     }
 
+    public int deleteColumnByName(String databaseName, String tableName, String columnName) {
+        if(FileEditor.deleteColumnFile(databaseName, tableName, columnName) == 0) return 0;
+        return databaseDao.deleteColumnByName(databaseName, tableName, columnName);
+    }
+
 }

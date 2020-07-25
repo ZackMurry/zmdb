@@ -196,10 +196,20 @@ public class FileEditor {
             FileUtils.deleteDirectory(file);
             return 1;
         } catch (Exception e) {
-            ZmdbLogger.log("Error while deleting directory of database " + databaseName + ".");
+            ZmdbLogger.log("Error while deleting directory of table " + databaseName + ".");
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public static int deleteColumnFile(String databaseName, String tableName, String columnName) {
+        File file = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName);
+        if(!file.exists()) {
+            ZmdbLogger.log("Could not delete column " + columnName + " in table " + tableName + " in database " + databaseName + " because the file could not be found.");
+            return 0;
+        }
+
+        return file.delete() ? 1 : 0;
     }
 
 
