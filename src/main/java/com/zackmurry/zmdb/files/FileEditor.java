@@ -2,17 +2,22 @@ package com.zackmurry.zmdb.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
+import com.zackmurry.zmdb.settings.CustomizationPort;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class FileEditor {
 
-    public static final String VALUE_SEPARATOR = " &n "; //maybe change to something that doesn't have spaces
+    //todo add ability to change these (would need to store them in settings.txt) (mostly just VALUE_SEPARATOR)
+    public static final String VALUE_SEPARATOR = "@n%"; //maybe change to something that doesn't have spaces
     public static final String TYPE_INDICATOR = "@Type=";
     public static final String INDEX_INDICATOR = "@Index=";
+
+    public static final String PORT_INDICATOR = "@Port=";
 
     private DataLoader dataLoader = new DataLoader();
 
@@ -122,6 +127,26 @@ public class FileEditor {
     public static int writeToFile(String text, File file) {
         try {
             FileWriter myWriter = new FileWriter(file, true);
+            myWriter.write(text);
+            myWriter.close();
+            ZmdbLogger.log("Successfully wrote to file: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            ZmdbLogger.log("An error occurred while writing to " + file.getAbsolutePath());
+            e.printStackTrace();
+            return 0;
+        }
+        return 1;
+    }
+
+    /**
+     * same thing as writeToFile, but append mode is off
+     * @param text text to write
+     * @param file file to write to
+     * @return
+     */
+    public static int replaceFileText(String text, File file) {
+        try {
+            FileWriter myWriter = new FileWriter(file);
             myWriter.write(text);
             myWriter.close();
             ZmdbLogger.log("Successfully wrote to file: " + file.getAbsolutePath());
@@ -323,7 +348,7 @@ public class FileEditor {
     /**
      * @param file details file of table
      */
-    private static int setIndexOfTable(File file, String index) {
+    public static int setIndexOfTable(File file, String index) {
         if(!file.exists()) {
             ZmdbLogger.log("Couldn't change file " + file + " because it doesn't exist.");
             return 0;
@@ -349,6 +374,65 @@ public class FileEditor {
 
         setIndexOfTable(detailsFile, columnName);
         return 1;
+    }
+
+    public static int deleteAllSubdirectories(File file) {
+        File[] files = file.listFiles();
+        if(files != null) {
+            for (File subdir : files) {
+                if(deleteFolder(subdir) != 1) return 0;
+            }
+        }
+        return 1;
+
+    }
+
+    public static int deleteFolder(File file) {
+        File[] files = file.listFiles();
+        if(files != null) {
+            for(File subdirectory : files) {
+                deleteFolder(subdirectory);
+            }
+        }
+        return file.delete() ? 1 : 0;
+    }
+
+    public static int deleteAllSubdirectoriesExcept(File file, HashSet<String> except) {
+        File[] files = file.listFiles();
+        if(files != null) {
+            for (File subdir : files) {
+                if(except.contains(subdir.getName())) continue;
+                if(deleteFolder(subdir) != 1) return 0;
+            }
+        }
+        return 1;
+
+    }
+
+    public static void updatePortInSettings(int newPort) {
+        File settingsFile = new File("settings.txt");
+        if(!settingsFile.exists()) {
+            try {
+                if(!settingsFile.createNewFile()) {
+                    return;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                ZmdbLogger.log("Error creating settings file.");
+                return;
+            }
+        }
+
+        replaceFileText(PORT_INDICATOR + newPort, settingsFile); //todo rework this once i add more settings
+    }
+
+    public static int getPortFromSettings() {
+        File settingsFile = new File("settings.txt");
+        if(!settingsFile.exists()) {
+            //just set to the default port
+            return CustomizationPort.DEFAULT_PORT;
+        }
+        return FileReading.readIntFromIndex(settingsFile, PORT_INDICATOR);
     }
 
 }

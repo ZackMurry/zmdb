@@ -5,17 +5,12 @@ import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.entities.Table;
-import org.springframework.http.ZeroCopyHttpOutputMessage;
+
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
-import javax.xml.crypto.Data;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -271,6 +266,38 @@ public class DatabaseDataAccessService implements DatabaseDao {
             return "NULL";
         }
         return optionalTable.get().getIndexColumnName();
+    }
+
+    @Override
+    public int deleteAllDatabases() {
+        if(databases.isEmpty()) {
+            ZmdbLogger.log("No databases to delete.");
+            return 0;
+        }
+        databases.clear();
+        return 1;
+    }
+
+    @Override
+    public int deleteAllTablesInDatabase(String databaseName) {
+        Optional<Database> optionalDatabase = getDatabaseByName(databaseName);
+        if(optionalDatabase.isEmpty()) {
+            ZmdbLogger.log("Couldn't delete all tables in database " + databaseName + " because the database doesn't exist.");
+            return 0;
+        }
+        optionalDatabase.get().removeAllTables();
+        return 1;
+    }
+
+    @Override
+    public int deleteAllColumnsInTable(String databaseName, String tableName) {
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Couldn't delete all columns of table " + tableName + " in database " + databaseName + " because the table doesn't exist.");
+            return 0;
+        }
+        optionalTable.get().removeAllColumns();
+        return 1;
     }
 
 

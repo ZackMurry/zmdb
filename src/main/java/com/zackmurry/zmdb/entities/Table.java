@@ -182,6 +182,9 @@ public class Table {
     }
 
     public int setIndexColumn(String columnName) {
+        if(columnName.isBlank()) {
+            return 0;
+        }
         for (int i = 0; i < columns.size(); i++) {
             if(columns.get(i).getName().equals(columnName)) {
                 indexOfIndexColumn = i;

@@ -124,4 +124,19 @@ public class DatabaseController {
     public String getTableIndex(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName) {
         return databaseService.getTableIndex(databaseName, tableName);
     }
+
+    @DeleteMapping("/databases")
+    public int deleteAllDatabases() {
+        return databaseService.deleteAllDatabases();
+    }
+
+    @DeleteMapping("/databases/{databaseName}/tables")
+    public int deleteAllTablesInDatabase(@PathVariable("databaseName") String databaseName) {
+        return databaseService.deleteAllTablesInDatabase(databaseName);
+    }
+
+    @DeleteMapping("/databases/{databaseName}/tables/{tableName}/columns")
+    public int deleteAllColumnsInTable(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName) {
+        return databaseService.deleteAllColumnsInTable(databaseName, tableName);
+    }
 }

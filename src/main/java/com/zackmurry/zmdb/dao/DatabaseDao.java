@@ -57,4 +57,10 @@ public interface DatabaseDao {
 
     String getTableIndex(String databaseName, String tableName);
 
+    int deleteAllDatabases();
+
+    int deleteAllTablesInDatabase(String databaseName);
+
+    int deleteAllColumnsInTable(String databaseName, String tableName);
+
 }

@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * put mapping
  * validating if a row with certain details exists
  * deleting dbs/tables/columns/rows
- * changing index column
  * delete all databases/tables/columns
  * delete column by type
  *

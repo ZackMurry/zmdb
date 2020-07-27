@@ -8,10 +8,13 @@ import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.controller.proto.ProtoColumn;
 import com.zackmurry.zmdb.entities.Table;
+import com.zackmurry.zmdb.files.FileReading;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -185,6 +188,65 @@ public class DatabaseService {
 
     public int deleteColumnByName(String databaseName, String tableName, String columnName) {
         if(FileEditor.deleteColumnFile(databaseName, tableName, columnName) == 0) return 0;
+
+        //if the index column is this column
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        if(!tableFile.exists()) {
+            ZmdbLogger.log("Error: file doesn't exist for table " + tableName + " in database " + databaseName + ". File path used was " + tableFile.getPath() + ".");
+            return 0;
+        }
+        String indexColumnName = FileReading.readFirstLine(new File(tableFile.getPath() + "/details.txt")).replace(FileEditor.INDEX_INDICATOR, "");
+        if(indexColumnName.equals(columnName)) {
+            String[] tableList = tableFile.list();
+            if(tableList == null) {
+                ZmdbLogger.log("Error: no files found under table " + tableName + " in database " + databaseName + ". There should at least be a details.txt file.");
+                return 0;
+            }
+
+            int numOfFilesInTable = tableList.length;
+
+            //if there's only one other column file, then set it as the index column
+            if(numOfFilesInTable == 2) {
+                File[] listTableFiles = tableFile.listFiles();
+
+                //this probably won't happen since i already counted the number of files
+                if(listTableFiles == null) {
+                    ZmdbLogger.log("List of table files is null. Unable to update index column of table " + tableName + " in database " + databaseName + ".");
+                    return 0;
+                }
+
+                String otherColumnName = "";
+
+                for(File subdirectoryOfTableFile : listTableFiles) {
+                    if(subdirectoryOfTableFile.getName().equals("details.txt")) continue;
+
+                    //now we're only looking at the single column file
+                    otherColumnName = subdirectoryOfTableFile.getName().replace(".txt", "");
+                }
+
+                if(otherColumnName.equals("")) {
+                    ZmdbLogger.log("Couldn't find name of other column of table " + tableName + " in database " + databaseName + ". Couldn't change index column.");
+                    return 0;
+                }
+
+                FileEditor.setIndexOfTable(new File(tableFile.getPath() + "/details.txt"), otherColumnName);
+                if(databaseDao.changeTableIndex(databaseName, tableName, otherColumnName) != 1) {
+                    ZmdbLogger.log("Error while changing index column of table " + tableName + " in database " + databaseName + " as the table coulnd't be found.");
+                    return 0;
+                }
+                ZmdbLogger.log("Automatically updated index column of table " + tableName + " in database " + databaseName + " to " + otherColumnName + ".");
+
+            }
+
+            //if there's multiple other column files
+            if(numOfFilesInTable > 2){
+                FileEditor.setIndexOfTable(tableFile, "NULL");
+                //and log it
+                ZmdbLogger.log("Index column deleted. Please set the index column of table " + tableName + " in database " + databaseName + ".");
+            }
+
+        }
+
         return databaseDao.deleteColumnByName(databaseName, tableName, columnName);
     }
 
@@ -219,4 +281,32 @@ public class DatabaseService {
         return databaseDao.getTableIndex(databaseName, tableName);
     }
 
+    public int deleteAllDatabases() {
+        if(FileEditor.deleteAllSubdirectories(new File("data/databases")) != 1) {
+            ZmdbLogger.log("Error occurred while deleting database files.");
+            return 0;
+        }
+        return databaseDao.deleteAllDatabases();
+    }
+
+    public int deleteAllTablesInDatabase(String databaseName) {
+        if(FileEditor.deleteAllSubdirectories(new File("data/databases/" + databaseName)) != 1) {
+            ZmdbLogger.log("An error occurred while deleting all tables in database " + databaseName + ".");
+            return 0;
+        }
+        return databaseDao.deleteAllTablesInDatabase(databaseName);
+    }
+
+    public int deleteAllColumnsInTable(String databaseName, String tableName) {
+        HashSet<String> except = new HashSet<>();
+        except.add("details.txt");
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        if(FileEditor.deleteAllSubdirectoriesExcept(tableFile, except) != 1) {
+            ZmdbLogger.log("Ann error occurred while deleting all columns of table " + tableName + " in database " + databaseName + ".");
+            return 0;
+        }
+
+        FileEditor.setIndexOfTable(new File(tableFile.getPath() + "/details.txt"), "NULL"); //clearing the index column
+        return databaseDao.deleteAllColumnsInTable(databaseName, tableName);
+    }
 }
