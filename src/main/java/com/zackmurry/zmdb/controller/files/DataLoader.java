@@ -75,16 +75,16 @@ public class DataLoader {
                             return 0;
                         }
 
-                        databaseService.includeColumnInTable(databaseFile.getName(), tableFile.getName(), new ProtoColumn(columnFile.getName(), firstLine));
+                        System.out.println(columnFile.getName());
+                        databaseService.includeColumnInTable(databaseFile.getName(), tableFile.getName(), new ProtoColumn(columnFile.getName().replace(".txt", ""), firstLine));
                         ZmdbLogger.log("Loading column: " + columnFile.getName());
-
 
                         //reading rows of columns
                         String[] rows = FileReading.getAllLinesButFirst(columnFile).split(FileEditor.VALUE_SEPARATOR);
                         for (String row : rows) {
                             if(row.equals(" ")) continue;
                             while(row.startsWith(" ")) row = row.substring(1);
-                            if(databaseService.includeRowInColumn(databaseFile.getName(), tableFile.getName(), columnFile.getName(), row) != 1) {
+                            if(databaseService.includeRowInColumn(databaseFile.getName(), tableFile.getName(), columnFile.getName().replace(".txt", ""), row) != 1) {
                                 ZmdbLogger.log("Failed to include row with data " + row + ".");
                                 return 0;
                             }
@@ -100,7 +100,6 @@ public class DataLoader {
 
             }
         }
-
 
         return 1;
     }

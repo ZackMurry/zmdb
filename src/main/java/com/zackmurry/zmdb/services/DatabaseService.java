@@ -92,6 +92,7 @@ public class DatabaseService {
         }
 
         //todo defo want to make this into a function / use a constructor to set values
+        //todo add UUID type (maybe add option to auto-generate it)
 
         int out;
 

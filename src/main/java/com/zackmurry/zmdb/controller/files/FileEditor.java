@@ -57,20 +57,13 @@ public class FileEditor {
     }
 
     public int newColumnFile(String databaseName, String tableName, String columnName, String columnType) {
-
-        File dbFile = new File("data/databases/" + databaseName);
-        if(!dbFile.exists()) {
-            ZmdbLogger.log("Cannot create table: database file doesn't exist.");
-            return 0;
-        }
-
         File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
         if(!tableFile.exists()) {
             ZmdbLogger.log("Cannot create column: table file doesn't exist.");
             return 0;
         }
 
-        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName); //todo maybe change to .txt
+        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt"); //todo maybe change to .txt
         if(columnFile.exists()) {
             ZmdbLogger.log("Cannot create column: column file already exists.");
             return 0;
