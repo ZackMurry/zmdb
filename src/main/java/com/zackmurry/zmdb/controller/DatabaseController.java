@@ -70,7 +70,7 @@ public class DatabaseController {
 
     @PostMapping("/databases/{databaseName}/tables/{tableName}")
     public int addRowToTable(@PathVariable(name="databaseName") String databaseName, @PathVariable(name="tableName") String tableName, @RequestBody ProtoRow protoRow) {
-        return databaseService.addRowToTable(databaseName, tableName, protoRow.getData());
+        return databaseService.addRowToTable(databaseName, tableName, protoRow.getData(), protoRow.getOrder());
     }
 
     @GetMapping("/databases/{databaseName}/tables/{tableName}")
@@ -83,9 +83,10 @@ public class DatabaseController {
         return databaseService.getColumnByName(databaseName, tableName, columnName);
     }
 
+    //todo probly change this to include order
     @GetMapping("/databases/{databaseName}/tables/{tableName}/contains")
     public boolean tableContains(@PathVariable(name="databaseName") String databaseName, @PathVariable(name="tableName") String tableName, @RequestBody ProtoRow protoRow) {
-        return databaseService.tableContains(databaseName, tableName, protoRow.getData());
+        return databaseService.tableContains(databaseName, tableName, protoRow);
     }
 
     @DeleteMapping("/databases/{databaseName}")
@@ -101,5 +102,10 @@ public class DatabaseController {
     @DeleteMapping("/databases/{databaseName}/tables/{tableName}/columns/{columnName}")
     public int deleteColumnByName(@PathVariable(name="databaseName") String databaseName, @PathVariable(name="tableName") String tableName, @PathVariable(name="columnName") String columnName) {
         return databaseService.deleteColumnByName(databaseName, tableName, columnName);
+    }
+
+    @DeleteMapping("/databases/{databaseName}/tables/{tableName}/rows")
+    public int deleteRow(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @RequestBody ProtoRow protoRow) {
+        return databaseService.deleteRow(databaseName, tableName, protoRow);
     }
 }

@@ -1,13 +1,16 @@
 package com.zackmurry.zmdb.controller.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FileEditor {
 
-    public static final String VALUE_SEPARATOR = " &n ";
+    public static final String VALUE_SEPARATOR = " &n "; //maybe change to something that doesn't have spaces
 
     private DataLoader dataLoader = new DataLoader();
 
@@ -67,7 +70,7 @@ public class FileEditor {
             return 0;
         }
 
-        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName);
+        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName); //todo maybe change to .txt
         if(columnFile.exists()) {
             ZmdbLogger.log("Cannot create column: column file already exists.");
             return 0;
@@ -212,6 +215,59 @@ public class FileEditor {
         return file.delete() ? 1 : 0;
     }
 
+    public static int deleteRowFromTable(String databaseName, String tableName, ProtoRow protoRow) {
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        if(!tableFile.exists()) {
+            ZmdbLogger.log("Could not delete row in table " + tableName + " in database " + databaseName + " because the file couldn't be found.");
+            return 0;
+        }
+        File[] columnFiles = tableFile.listFiles();
+        if(columnFiles == null) {
+            ZmdbLogger.log("Could not delete row in table " + tableName + " in database " + databaseName + " because no column files could be found.");
+            return 0;
+        }
+        for(File columnFile : columnFiles) {
+            int index = -1;
+            for (int i = 0; i < protoRow.getOrder().size(); i++) {
+                if(columnFile.getName().equals(protoRow.getOrder().get(i))) index = i;
+            }
+            if(index == -1) {
+                ZmdbLogger.log("Could not delete row in table " + tableName + " in database " + databaseName + " because the order was wrong.");
+                return 0;
+            }
+            String[] rowsInColumn = FileReading.getAllLinesButFirst(columnFile).split(VALUE_SEPARATOR);
+            int deleteIndex = -1;
+            for (int i = 0; i < rowsInColumn.length; i++) {
+                if(rowsInColumn[i].equals(protoRow.getData().get(index))) deleteIndex = i;
+            }
+            if(deleteIndex == -1) {
+                ZmdbLogger.log("Could not delete row in table " + tableName + " in database " + databaseName + " because the delete index wasn't found.");
+                return 0;
+            }
+            if(deleteRowFromColumn(columnFile, deleteIndex) != 1) {
+                return 0;
+            }
+        }
+        return 1;
+
+    }
+
+    public static int deleteRowFromColumn(File file, int deleteIndex) {
+        if(!file.exists()) {
+            ZmdbLogger.log("Couldn't delete row from column because the file (" + file.getAbsolutePath() + ") could not be found.");
+            return 0;
+        }
+        ArrayList<Object> rows = new ArrayList<>(Arrays.asList(FileReading.getAllLinesButFirst(file).split(VALUE_SEPARATOR)));
+        rows.remove(deleteIndex);
+        replaceRows(file, rows);
+        return 1;
+    }
+
+    public static void replaceRows(File file, ArrayList<Object> rows) {
+        String firstLine = FileReading.readFirstLine(file);
+        String rowString = rows.toString().replace(", ", VALUE_SEPARATOR).replace("[", "").replace("]", "");
+        silentReplaceFileText(firstLine + "\n" + rowString, file);
+    }
 
 
 }

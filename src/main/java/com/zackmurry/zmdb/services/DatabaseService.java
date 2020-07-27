@@ -220,8 +220,8 @@ public class DatabaseService {
     }
 
 
-    public int addRowToTable(String databaseName, String tableName, ArrayList<Object> data) {
-        return databaseDao.addRowToTable(databaseName, tableName, data);
+    public int addRowToTable(String databaseName, String tableName, ArrayList<Object> data, ArrayList<String> order) {
+        return databaseDao.addRowToTable(databaseName, tableName, data, order);
     }
 
     public int includeRowInColumn(String databaseName, String tableName, String columnName, Object data) {
@@ -243,8 +243,8 @@ public class DatabaseService {
         return optionalColumn.get();
     }
 
-    public boolean tableContains(String databaseName, String tableName, ArrayList<Object> data) {
-        return databaseDao.tableContains(databaseName, tableName, data);
+    public boolean tableContains(String databaseName, String tableName, ProtoRow protoRow) {
+        return databaseDao.tableContains(databaseName, tableName, protoRow.getData(), protoRow.getOrder());
     }
 
     public int deleteDatabaseByName(String databaseName) {
@@ -260,6 +260,11 @@ public class DatabaseService {
     public int deleteColumnByName(String databaseName, String tableName, String columnName) {
         if(FileEditor.deleteColumnFile(databaseName, tableName, columnName) == 0) return 0;
         return databaseDao.deleteColumnByName(databaseName, tableName, columnName);
+    }
+
+    public int deleteRow(String databaseName, String tableName, ProtoRow protoRow) {
+        if(FileEditor.deleteRowFromTable(databaseName, tableName, protoRow) != 1) return 0;
+        return databaseDao.deleteRow(databaseName, tableName, protoRow);
     }
 
 }

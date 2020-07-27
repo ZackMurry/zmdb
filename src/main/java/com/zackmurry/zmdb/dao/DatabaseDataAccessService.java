@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.dao;
 
 import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.entities.Table;
@@ -63,7 +64,6 @@ public class DatabaseDataAccessService implements DatabaseDao {
             return OPERATION_FAIL_VALUE;
         }
         Database database = optionalDatabase.get();
-        System.out.println(database.getTable(table.getName()).isPresent());
         if(database.getTable(table.getName()).isPresent()) {
             ZmdbLogger.log("Cannot create table with name " + table.getName() + " in database " + databaseName + " as one already exists with the same name.");
             return OPERATION_FAIL_VALUE;
@@ -112,7 +112,7 @@ public class DatabaseDataAccessService implements DatabaseDao {
     }
 
     @Override
-    public int addRowToTable(String databaseName, String tableName, ArrayList<Object> data) {
+    public int addRowToTable(String databaseName, String tableName, ArrayList<Object> data, ArrayList<String> order) {
         Optional<Table> optionalTable = getTable(databaseName, tableName);
         if(optionalTable.isEmpty()) {
             return OPERATION_FAIL_VALUE;
@@ -122,7 +122,7 @@ public class DatabaseDataAccessService implements DatabaseDao {
             ZmdbLogger.log("Unable to add row to table " + table.getName() + ": input is not the same length as row length.");
             return OPERATION_FAIL_VALUE;
         }
-        return table.addRow(data);
+        return table.addRow(data, order);
     }
 
     @Override
@@ -166,15 +166,14 @@ public class DatabaseDataAccessService implements DatabaseDao {
     }
 
     @Override
-    public boolean tableContains(String databaseName, String tableName, ArrayList<Object> data) {
+    public boolean tableContains(String databaseName, String tableName, ArrayList<Object> data, ArrayList<String> order) {
         Optional<Table> optionalTable = getTable(databaseName, tableName);
         if(optionalTable.isEmpty()) {
             ZmdbLogger.log("Cannot check for row in table " + tableName + " in database " + databaseName + " because the table couldn't be found.");
             return false;
         }
         Table table = optionalTable.get();
-        return table.containsRow(data);
-
+        return table.containsRow(data, order);
     }
 
     @Override
@@ -213,6 +212,16 @@ public class DatabaseDataAccessService implements DatabaseDao {
         }
         optionalTable.get().removeColumn(columnName);
         return 1;
+    }
+
+    @Override
+    public int deleteRow(String databaseName, String tableName, ProtoRow protoRow) {
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Could not delete row from table " + tableName + " in database " + databaseName + " because the table could not be found.");
+            return 0;
+        }
+        return optionalTable.get().removeRow(protoRow.getData(), protoRow.getOrder());
     }
 
 

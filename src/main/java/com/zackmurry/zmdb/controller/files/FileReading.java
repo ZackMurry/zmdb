@@ -1,5 +1,7 @@
 package com.zackmurry.zmdb.controller.files;
 
+import com.zackmurry.zmdb.ZmdbLogger;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -18,7 +20,7 @@ public class FileReading {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            ZmdbLogger.log("An error occurred while reading file " + file + ".");
             e.printStackTrace();
         }
 
@@ -34,7 +36,7 @@ public class FileReading {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            ZmdbLogger.log("An error occurred while reading file " + file + ".");
             e.printStackTrace();
         }
 
@@ -51,7 +53,7 @@ public class FileReading {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            ZmdbLogger.log("An error occurred while reading file " + file + ".");
             e.printStackTrace();
         }
 

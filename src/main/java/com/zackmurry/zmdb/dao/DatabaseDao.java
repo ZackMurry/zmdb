@@ -1,5 +1,6 @@
 package com.zackmurry.zmdb.dao;
 
+import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.entities.Table;
@@ -26,7 +27,7 @@ public interface DatabaseDao {
 
     int addColumnToTable(String databaseName, String tableName, Column<?> column);
 
-    int addRowToTable(String databaseName, String tableName, ArrayList<Object> data);
+    int addRowToTable(String databaseName, String tableName, ArrayList<Object> data, ArrayList<String> order);
 
     Optional<Table> getTable(String databaseName, String tableName);
 
@@ -34,7 +35,7 @@ public interface DatabaseDao {
 
     Optional<Column<?>> getColumn(String databaseName, String tableName, String columnName);
 
-    boolean tableContains(String databaseName, String tableName, ArrayList<Object> data);
+    boolean tableContains(String databaseName, String tableName, ArrayList<Object> data, ArrayList<String> order);
 
     int deleteDatabaseByName(String databaseName);
 
@@ -42,4 +43,5 @@ public interface DatabaseDao {
 
     int deleteColumnByName(String databaseName, String tableName, String columnName);
 
+    int deleteRow(String databaseName, String tableName, ProtoRow protoRow);
 }

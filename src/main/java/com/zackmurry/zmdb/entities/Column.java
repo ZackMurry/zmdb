@@ -108,4 +108,16 @@ public class Column<T> {
     public boolean elementAtIndexEquals(int index, Object element) {
         return rows.get(index).equals(element);
     }
+
+    public int findIndex(Object data) {
+        int index = -1;
+        for (int i = 0; i < rows.size(); i++) {
+            if(rows.get(i).equals(data)) index = i;
+        }
+        return index;
+    }
+
+    public void removeRow(int index) {
+        rows.remove(index);
+    }
 }
