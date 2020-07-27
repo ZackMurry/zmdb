@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.controller;
 
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
+import com.zackmurry.zmdb.controller.proto.ProtoString;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.controller.proto.ProtoColumn;
@@ -107,5 +108,15 @@ public class DatabaseController {
     @DeleteMapping("/databases/{databaseName}/tables/{tableName}/rows")
     public int deleteRow(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @RequestBody ProtoRow protoRow) {
         return databaseService.deleteRow(databaseName, tableName, protoRow);
+    }
+
+    @PostMapping("/databases/{databaseName}/tables/{tableName}/index")
+    public int changeTableIndex(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @RequestBody ProtoString columnName) {
+        return databaseService.changeTableIndex(databaseName, tableName, columnName.getName());
+    }
+
+    @GetMapping("/databases/{databaseName}/tables/{tableName}/index")
+    public String getTableIndex(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName) {
+        return databaseService.getTableIndex(databaseName, tableName);
     }
 }

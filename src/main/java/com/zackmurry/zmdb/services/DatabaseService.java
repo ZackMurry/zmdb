@@ -92,11 +92,6 @@ public class DatabaseService {
             return 0;
         }
 
-        //todo defo want to make this into a function / use a constructor to set values
-        //todo add UUID type (maybe add option to auto-generate it)
-
-
-
         //yikes 0.0
         Optional<Column<?>> optionalColumn = buildColumn(protoColumn.getType(), databaseName, tableName, protoColumn.getName());
         if(optionalColumn.isEmpty()) {
@@ -118,7 +113,17 @@ public class DatabaseService {
         return databaseDao.addColumnToTable(databaseName, tableName, optionalColumn.get());
     }
 
+    /**
+     *
+     * @param type the type of column to be generated
+     * @param databaseName the databaseName of the column
+     * @param tableName the tableName of the column
+     * @param name the name of the column
+     * @return returns the built column
+     */
     public Optional<Column<?>> buildColumn(String type, String databaseName, String tableName, String name) {
+        //todo add UUID type (maybe add option to auto-generate it)
+
         switch(type) {
             case "Boolean":
                 return Optional.of(new Column<Boolean>(databaseName, tableName, name));
@@ -171,6 +176,7 @@ public class DatabaseService {
         return databaseDao.tableContains(databaseName, tableName, protoRow.getData(), protoRow.getOrder());
     }
 
+    //todo add delete all databases/tables/columns
     public int deleteDatabaseByName(String databaseName) {
         if(FileEditor.deleteDatabaseFile(databaseName) == 0) return 0;
         return databaseDao.deleteDatabaseByName(databaseName);
@@ -189,6 +195,17 @@ public class DatabaseService {
     public int deleteRow(String databaseName, String tableName, ProtoRow protoRow) {
         if(FileEditor.deleteRowFromTable(databaseName, tableName, protoRow) != 1) return 0;
         return databaseDao.deleteRow(databaseName, tableName, protoRow);
+    }
+
+    public int changeTableIndex(String databaseName, String tableName, String columnName) {
+        if(FileEditor.changeTableIndex(databaseName, tableName, columnName) != 1) {
+            return 0;
+        }
+        return databaseDao.changeTableIndex(databaseName, tableName, columnName);
+    }
+
+    public String getTableIndex(String databaseName, String tableName) {
+        return databaseDao.getTableIndex(databaseName, tableName);
     }
 
 }

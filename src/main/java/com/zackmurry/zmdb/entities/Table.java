@@ -12,8 +12,9 @@ public class Table {
 
     private String name;
 
-    private List<Column<?>> columns = new ArrayList<>(); //the first added column is the index and each element must be unique todo: implement
-    //todo allow changing of the index column
+    private List<Column<?>> columns = new ArrayList<>();
+
+    private int indexOfIndexColumn = 0; //todo require index columns to have all unique values (useful for searching values in tables)
 
     public Table(String name, Column<?>... columns) {
         this.name = name;
@@ -77,44 +78,27 @@ public class Table {
     }
 
     public int addRow(ArrayList<Object> data, ArrayList<String> order) {
-        int out = 1;
-
         for(Column<?> column : columns) {
             int index = -1;
-            System.out.println("here");
-            System.out.println(order.size());
             for (int i = 0; i < order.size(); i++) {
-                System.out.println("h");
-                System.out.println(column.getName());
                 if(order.get(i).equals(column.getName())) index = i;
-
             }
             if(index == -1) {
-                ZmdbLogger.log("Couldn't add row to table " + this.name + " because the order was wrong.");
+                ZmdbLogger.log("Couldn't add row to table " + this.name + " because the order doesn't have the same names as the column names.");
                 return 0;
             }
             if(column.addRow(data.get(index)) != 1) return 0;
-
-
         }
-
-        /*for (int i = 0; i < data.size(); i++) {
-            if(columns.get(i).addRow(data.get(i)) != 1) {
-                out = 0;
-            }
-        }*/
-        return out;
+        return 1;
     }
 
     public boolean containsRow(ArrayList<Object> data, ArrayList<String> order) {
         if(columns.size() < 1) return false;
 
-        //todo change 0 to var (of index column index)
-
         int orderIndex = -1;
         //find the index of the indexColumn in the order arraylist
         for (int j = 0; j < order.size(); j++) {
-            if(order.get(j).equals(columns.get(0).getName())) orderIndex = j;
+            if(order.get(j).equals(columns.get(indexOfIndexColumn).getName())) orderIndex = j;
         }
 
         if(orderIndex == -1) {
@@ -124,19 +108,20 @@ public class Table {
 
         //finding the row that we're looking for
         int rowIndex = -1;
-        for (int i = 0; i < columns.get(0).getNumberOfRows(); i++) {
-            if(columns.get(0).getItemFromRow(i).equals(data.get(orderIndex))) {
+        for (int i = 0; i < columns.get(indexOfIndexColumn).getNumberOfRows(); i++) {
+            if(columns.get(indexOfIndexColumn).getItemFromRow(i).equals(data.get(orderIndex))) {
                 rowIndex = i;
                 break;
             }
         }
         if(rowIndex == -1) {
-            System.out.println("Unfound index.");
             return false;
         }
 
         //replace 0+1 with 0 and an if statement with continue; if i == indexColumnIndex
-        for (int i = 0+1; i < columns.size(); i++) {
+        for (int i = 0; i < columns.size(); i++) {
+
+            if(i == indexOfIndexColumn) continue;
 
             //getting the index of the 'data' inputted based on the 'order' input
             int dataIndex = -1;
@@ -166,18 +151,39 @@ public class Table {
         //finding data index that corresponds with indexColumn
         int orderIndex = -1;
         for (int i = 0; i < order.size(); i++) {
-            //todo change 0 to indexColumn index
-            if(columns.get(0).getName().equals(order.get(i))) {
+            if(columns.get(indexOfIndexColumn).getName().equals(order.get(i))) {
                 orderIndex = i;
                 break;
             }
         }
 
-        int deleteIndex = columns.get(0).findIndex(data.get(orderIndex));
+        int deleteIndex = columns.get(indexOfIndexColumn).findIndex(data.get(orderIndex));
         for(Column<?> column : columns) {
             column.removeRow(deleteIndex);
         }
         return 1;
     }
 
+    public int getIndexOfIndexColumn() {
+        return indexOfIndexColumn;
+    }
+
+    public void setIndexOfIndexColumn(int indexOfIndexColumn) {
+        this.indexOfIndexColumn = indexOfIndexColumn;
+    }
+
+    public int setIndexColumn(String columnName) {
+        for (int i = 0; i < columns.size(); i++) {
+            if(columns.get(i).getName().equals(columnName)) {
+                indexOfIndexColumn = i;
+                return 1;
+            }
+        }
+        ZmdbLogger.log("Could not set index column of table " + this.name + " because the column " + columnName + " could not be found.");
+        return 0;
+    }
+
+    public String getIndexColumnName() {
+        return columns.get(indexOfIndexColumn).getName();
+    }
 }

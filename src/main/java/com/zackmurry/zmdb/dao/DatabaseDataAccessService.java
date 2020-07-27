@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * reserved words:
  *
  * contains
+ * NULL
  *
  *
  */
@@ -237,6 +238,26 @@ public class DatabaseDataAccessService implements DatabaseDao {
     @Override
     public boolean columnExists(String databaseName, String tableName, String columnName) {
         return getColumn(databaseName, tableName, columnName).isPresent();
+    }
+
+    @Override
+    public int changeTableIndex(String databaseName, String tableName, String columnName) {
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Could not change index column of table " + tableName + " in database " + databaseName + " because the table file couldn't be found.");
+            return 0;
+        }
+        return optionalTable.get().setIndexColumn(columnName);
+    }
+
+    @Override
+    public String getTableIndex(String databaseName, String tableName) {
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Unable to get index of table " + tableName + " in database " + databaseName + " because the table could not be found.");
+            return "NULL";
+        }
+        return optionalTable.get().getIndexColumnName();
     }
 
 

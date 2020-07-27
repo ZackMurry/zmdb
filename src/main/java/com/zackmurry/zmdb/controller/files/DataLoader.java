@@ -54,6 +54,7 @@ public class DataLoader {
 
                 for (File tableFile : tableFiles) {
 
+
                     if (databaseService.includeTable(new Table(tableFile.getName()), databaseFile.getName()) != 1) {
                         ZmdbLogger.log("Failed to load table: " + tableFile.getName());
                         return 0;
@@ -65,6 +66,7 @@ public class DataLoader {
                     if (columnFiles == null) continue;
 
                     for (File columnFile : columnFiles) {
+                        if(columnFile.getName().equals("details.txt")) continue;
 
                         String firstLine = FileReading.readFirstLine(columnFile); //getting the first line of columnFile (first line is where type info is stored)
 
@@ -75,7 +77,6 @@ public class DataLoader {
                             return 0;
                         }
 
-                        System.out.println(columnFile.getName());
                         databaseService.includeColumnInTable(databaseFile.getName(), tableFile.getName(), new ProtoColumn(columnFile.getName().replace(".txt", ""), firstLine));
                         ZmdbLogger.log("Loading column: " + columnFile.getName());
 
@@ -91,6 +92,11 @@ public class DataLoader {
                         }
 
                     }
+
+                    System.out.println(tableFile.getPath() + "/details.txt");
+                    String indexColumnName = FileReading.readFirstLine(new File(tableFile.getPath() + "/details.txt")).replace(FileEditor.INDEX_INDICATOR, "");
+
+                    if(!indexColumnName.equals("NULL")) databaseService.changeTableIndex(databaseFile.getName(), tableFile.getName(), indexColumnName);
 
                     ZmdbLogger.log("Table loaded: " + tableFile.getName());
 

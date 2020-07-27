@@ -11,6 +11,8 @@ import java.util.Arrays;
 public class FileEditor {
 
     public static final String VALUE_SEPARATOR = " &n "; //maybe change to something that doesn't have spaces
+    public static final String TYPE_INDICATOR = "@Type=";
+    public static final String INDEX_INDICATOR = "@Index=";
 
     private DataLoader dataLoader = new DataLoader();
 
@@ -50,10 +52,26 @@ public class FileEditor {
             return 0;
         }
 
-        if(tableFile.mkdir()) return 1; //mkdir() returns true if it's successful
 
-        ZmdbLogger.log("Cannot create table: create new file failed.");
-        return 0;
+
+
+        if(!tableFile.mkdir()) return 0; //mkdir() returns true if it's successful
+
+        File detailsFile = new File("data/databases/" + databaseName + "/" + tableName + "/details.txt"); //file for info about the table
+        try {
+            if(!detailsFile.createNewFile()) {
+                ZmdbLogger.log("An error occurred while creating the details file of " + tableName + " in database " + databaseName + ".");
+                return 0;
+            }
+        } catch (IOException e) {
+            ZmdbLogger.log("IOException was made while creating the details file of " + tableName + " in database " + databaseName + ".");
+            e.printStackTrace();
+            return 0;
+        }
+
+        silentReplaceFileText(INDEX_INDICATOR + "NULL", detailsFile);
+
+        return 1;
     }
 
     public int newColumnFile(String databaseName, String tableName, String columnName, String columnType) {
@@ -62,6 +80,21 @@ public class FileEditor {
             ZmdbLogger.log("Cannot create column: table file doesn't exist.");
             return 0;
         }
+
+        //working with index columns
+        String[] listTableFiles = tableFile.list();
+        if(listTableFiles != null) {
+            if(listTableFiles.length < 2) {
+                File detailsFile = new File("data/databases/" + databaseName + "/" + tableName + "/details.txt");
+                if(!detailsFile.exists()) {
+                    ZmdbLogger.log("No details file found for table " + tableName + ".");
+                }
+                if(setIndexOfTable(detailsFile, columnName) != 1) {
+                    ZmdbLogger.log("Unable to set index of table " + tableName + ".");
+                }
+            }
+        }
+
 
         File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
         if(columnFile.exists()) {
@@ -81,7 +114,7 @@ public class FileEditor {
         //writing initial stuff to file
 
         //declaring type of data
-        writeToFile("@Type=" + columnType + "\n", columnFile);
+        writeToFile(TYPE_INDICATOR + columnType + "\n", columnFile);
 
         return 1;
     }
@@ -262,5 +295,35 @@ public class FileEditor {
         silentReplaceFileText(firstLine + "\n" + rowString, file);
     }
 
+    /**
+     * @param file details file of table
+     */
+    private static int setIndexOfTable(File file, String index) {
+        if(!file.exists()) {
+            ZmdbLogger.log("Couldn't change file " + file + " because it doesn't exist.");
+            return 0;
+        }
+        silentReplaceFileText(INDEX_INDICATOR + index, file);
+        return 1;
+    }
+
+    public static int changeTableIndex(String databaseName, String tableName, String columnName) {
+        File detailsFile = new File("data/databases" + "/" + databaseName + "/" + tableName + "/details.txt");
+        if(!detailsFile.exists()) {
+            try {
+                if(!detailsFile.createNewFile()) {
+                    ZmdbLogger.log("Unable to create a new details file for " + tableName + " in database " + databaseName + ".");
+                    return 0;
+                }
+            } catch (IOException e) {
+                ZmdbLogger.log("IOException was made while creating the details file of " + tableName + " in database " + databaseName + ".");
+                e.printStackTrace();
+                return 0;
+            }
+        }
+
+        setIndexOfTable(detailsFile, columnName);
+        return 1;
+    }
 
 }

@@ -50,4 +50,9 @@ public interface DatabaseDao {
     boolean tableExists(String databaseName, String tableName);
 
     boolean columnExists(String databaseName, String tableName, String columnName);
+
+    int changeTableIndex(String databaseName, String tableName, String columnName);
+
+    String getTableIndex(String databaseName, String tableName);
+
 }
