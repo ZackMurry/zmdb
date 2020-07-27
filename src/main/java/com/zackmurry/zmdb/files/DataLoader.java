@@ -1,4 +1,4 @@
-package com.zackmurry.zmdb.controller.files;
+package com.zackmurry.zmdb.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoColumn;
@@ -23,6 +23,9 @@ public class DataLoader {
      */
     @PostConstruct
     public int loadAllData() {
+
+        //clearing logs
+        ZmdbLogger.clearLog();
 
         //getting databases
 

@@ -1,4 +1,4 @@
-package com.zackmurry.zmdb.controller.files;
+package com.zackmurry.zmdb.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
 

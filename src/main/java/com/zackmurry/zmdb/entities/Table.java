@@ -1,5 +1,7 @@
 package com.zackmurry.zmdb.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zackmurry.zmdb.ZmdbLogger;
 
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Table {
 
     private String name;
@@ -162,6 +165,12 @@ public class Table {
             column.removeRow(deleteIndex);
         }
         return 1;
+    }
+
+    public void removeRow(int index) {
+        for(Column<?> column : columns) {
+            column.removeRow(index);
+        }
     }
 
     public int getIndexOfIndexColumn() {

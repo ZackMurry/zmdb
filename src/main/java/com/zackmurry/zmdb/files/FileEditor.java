@@ -1,4 +1,4 @@
-package com.zackmurry.zmdb.controller.files;
+package com.zackmurry.zmdb.files;
 
 import com.zackmurry.zmdb.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
@@ -278,6 +278,29 @@ public class FileEditor {
 
     }
 
+    public static int deleteRowFromTableByIndex(String databaseName, String tableName, int index) {
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        if(!tableFile.exists()) {
+            ZmdbLogger.log("Couldn't delete row " + index + " from table " + tableName + " in database " + databaseName + " because the table file doesn't exist.");
+            return 0;
+        }
+        File[] columnFiles = tableFile.listFiles();
+
+        if(columnFiles == null) {
+            ZmdbLogger.log("No columns to delete rows from"); //also indicates that something went wrong with the details.txt process
+            return 0;
+        }
+
+        for(File columnFile : columnFiles) {
+            if(columnFile.getName().equals("details.txt")) continue;
+            if(deleteRowFromColumn(columnFile, index) != 1) {
+                return 0;
+            }
+        }
+
+        return 1;
+    }
+
     public static int deleteRowFromColumn(File file, int deleteIndex) {
         if(!file.exists()) {
             ZmdbLogger.log("Couldn't delete row from column because the file (" + file.getAbsolutePath() + ") could not be found.");
@@ -291,7 +314,9 @@ public class FileEditor {
 
     public static void replaceRows(File file, ArrayList<Object> rows) {
         String firstLine = FileReading.readFirstLine(file);
-        String rowString = rows.toString().replace(", ", VALUE_SEPARATOR).replace("[", "").replace("]", "");
+        String rowString = rows.toString().replace(", ", VALUE_SEPARATOR).replace("[", "").replace("]", VALUE_SEPARATOR);
+
+
         silentReplaceFileText(firstLine + "\n" + rowString, file);
     }
 

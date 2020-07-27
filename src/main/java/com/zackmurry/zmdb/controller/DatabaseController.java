@@ -110,6 +110,11 @@ public class DatabaseController {
         return databaseService.deleteRow(databaseName, tableName, protoRow);
     }
 
+    @DeleteMapping("/databases/{databaseName}/tables/{tableName}/rows/{index}")
+    public int deleteRowByIndex(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @PathVariable("index") String index) {
+        return databaseService.deleteRowByIndex(databaseName, tableName, index);
+    }
+
     @PostMapping("/databases/{databaseName}/tables/{tableName}/index")
     public int changeTableIndex(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @RequestBody ProtoString columnName) {
         return databaseService.changeTableIndex(databaseName, tableName, columnName.getName());

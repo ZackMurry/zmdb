@@ -1,20 +1,16 @@
 package com.zackmurry.zmdb.services;
 
 import com.zackmurry.zmdb.ZmdbLogger;
-import com.zackmurry.zmdb.controller.files.FileEditor;
+import com.zackmurry.zmdb.files.FileEditor;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.dao.DatabaseDao;
-import com.zackmurry.zmdb.dao.DatabaseDataAccessService;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.controller.proto.ProtoColumn;
 import com.zackmurry.zmdb.entities.Table;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -195,6 +191,21 @@ public class DatabaseService {
     public int deleteRow(String databaseName, String tableName, ProtoRow protoRow) {
         if(FileEditor.deleteRowFromTable(databaseName, tableName, protoRow) != 1) return 0;
         return databaseDao.deleteRow(databaseName, tableName, protoRow);
+    }
+
+    public int deleteRowByIndex(String databaseName, String tableName, String index) {
+        int intDex;
+        try{
+            intDex = Integer.parseInt(index);
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            ZmdbLogger.log("Couldn't delete row " + index + " in table " + tableName + " in database " + databaseName + " because the index is not a valid integer.");
+            return 0;
+        }
+        if(FileEditor.deleteRowFromTableByIndex(databaseName, tableName, intDex) != 1) {
+            return 0;
+        }
+        return databaseDao.deleteRowByIndex(databaseName, tableName, intDex);
     }
 
     public int changeTableIndex(String databaseName, String tableName, String columnName) {

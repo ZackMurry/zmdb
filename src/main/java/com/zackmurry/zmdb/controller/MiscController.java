@@ -1,6 +1,6 @@
 package com.zackmurry.zmdb.controller;
 
-import com.zackmurry.zmdb.controller.files.FileEditor;
+import com.zackmurry.zmdb.files.FileEditor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 

@@ -5,6 +5,7 @@ import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.entities.Table;
+import org.springframework.http.ZeroCopyHttpOutputMessage;
 import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
@@ -224,6 +225,18 @@ public class DatabaseDataAccessService implements DatabaseDao {
         }
         return optionalTable.get().removeRow(protoRow.getData(), protoRow.getOrder());
     }
+
+    @Override
+    public int deleteRowByIndex(String databaseName, String tableName, int index) {
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Could not delete row " + index + " in table " + tableName + " in database " + databaseName + " because the table could not be found");
+            return 0;
+        }
+        optionalTable.get().removeRow(index);
+        return 1;
+    }
+
 
     @Override
     public boolean databaseExists(String databaseName) {

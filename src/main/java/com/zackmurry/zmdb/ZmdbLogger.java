@@ -1,6 +1,6 @@
 package com.zackmurry.zmdb;
 
-import com.zackmurry.zmdb.controller.files.FileEditor;
+import com.zackmurry.zmdb.files.FileEditor;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +36,20 @@ public class ZmdbLogger {
     public static void log(String title, String text) {
         System.out.println(title);
         System.out.println(text);
+    }
+
+    public static void clearLog() {
+        File logFile = new File("log.txt");
+        if(!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        FileEditor.silentRemoveAllTextFromFile(logFile);
+
     }
 
 }

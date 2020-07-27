@@ -1,13 +1,12 @@
 package com.zackmurry.zmdb.entities;
 
-import com.sun.jdi.Type;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.zackmurry.zmdb.ZmdbLogger;
-import com.zackmurry.zmdb.controller.files.FileEditor;
+import com.zackmurry.zmdb.files.FileEditor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Column<T> {
 
     private String name;
@@ -97,7 +96,7 @@ public class Column<T> {
     }
 
     /**
-     * @param data
+     * @param data element to check for
      * @return -1 for no, else returns index of element where it is first found
      */
     public int containsElement(Object data) {

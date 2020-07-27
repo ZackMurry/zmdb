@@ -45,6 +45,8 @@ public interface DatabaseDao {
 
     int deleteRow(String databaseName, String tableName, ProtoRow protoRow);
 
+    int deleteRowByIndex(String databaseName, String tableName, int index);
+
     boolean databaseExists(String databaseName);
 
     boolean tableExists(String databaseName, String tableName);

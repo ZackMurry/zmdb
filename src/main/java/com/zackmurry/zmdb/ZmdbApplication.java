@@ -1,6 +1,6 @@
 package com.zackmurry.zmdb;
 
-import com.zackmurry.zmdb.controller.files.DataLoader;
+import com.zackmurry.zmdb.files.DataLoader;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
