@@ -224,5 +224,20 @@ public class DatabaseDataAccessService implements DatabaseDao {
         return optionalTable.get().removeRow(protoRow.getData(), protoRow.getOrder());
     }
 
+    @Override
+    public boolean databaseExists(String databaseName) {
+        return databases.stream().anyMatch(database -> database.getName().equals(databaseName));
+    }
+
+    @Override
+    public boolean tableExists(String databaseName, String tableName) {
+        return getTable(databaseName, tableName).isPresent();
+    }
+
+    @Override
+    public boolean columnExists(String databaseName, String tableName, String columnName) {
+        return getColumn(databaseName, tableName, columnName).isPresent();
+    }
+
 
 }

@@ -30,9 +30,11 @@ public class DatabaseService {
         return fileEditor;
     }
 
-
-    //todo make it so you can't have two dbs of the same name (same with tables and columns)
     public int addDatabase(Database database) {
+        if(databaseDao.databaseExists(database.getName())) {
+            ZmdbLogger.log("Cannot create database with name " + database.getName() + " because one already exists.");
+            return 0;
+        }
         //adding a new file with the database's name
         if(fileEditor.newDatabaseFile(database.getName()) != 1) {
             return 0;
@@ -48,6 +50,10 @@ public class DatabaseService {
     }
 
     public int addTable(Table table, String databaseName) {
+        if(databaseDao.tableExists(databaseName, table.getName())) {
+            ZmdbLogger.log("Cannot create table with name " + table.getName() + " in database " + databaseName + " because one already exists.");
+            return 0;
+        }
         if(databaseDao.addTable(table, databaseName) == 1) {
             return fileEditor.newTableFile(databaseName, table.getName());
         }
@@ -80,11 +86,16 @@ public class DatabaseService {
 
     public int addColumnToTable(String databaseName, String tableName, ProtoColumn protoColumn) {
 
+        if(databaseDao.columnExists(databaseName, tableName, protoColumn.getName())) {
+            ZmdbLogger.log("Unable to create column with name " + protoColumn.getName() + " in table " + tableName + " in database " + databaseName + " because one alredy exists.");
+            return 0;
+        }
 
-        //todo might want to make this into a function / use a constructor to set values
+        //todo defo want to make this into a function / use a constructor to set values
 
         int out;
 
+        //yikes 0.0
         switch(protoColumn.getType()) {
             case "Boolean":
                 Column<Boolean> column1 = new Column<>();

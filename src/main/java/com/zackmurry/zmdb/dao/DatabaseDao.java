@@ -44,4 +44,10 @@ public interface DatabaseDao {
     int deleteColumnByName(String databaseName, String tableName, String columnName);
 
     int deleteRow(String databaseName, String tableName, ProtoRow protoRow);
+
+    boolean databaseExists(String databaseName);
+
+    boolean tableExists(String databaseName, String tableName);
+
+    boolean columnExists(String databaseName, String tableName, String columnName);
 }
