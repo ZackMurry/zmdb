@@ -63,7 +63,7 @@ public class FileEditor {
             return 0;
         }
 
-        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt"); //todo maybe change to .txt
+        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
         if(columnFile.exists()) {
             ZmdbLogger.log("Cannot create column: column file already exists.");
             return 0;
@@ -134,7 +134,7 @@ public class FileEditor {
     }
 
     public static int writeToColumn(String text, String databaseName, String tableName, String columnName) {
-        File file = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName);
+        File file = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
         if(!file.exists()) {
             ZmdbLogger.log("Error writing row: " + file.getPath() + " does not exist.");
             return 0;
@@ -199,7 +199,7 @@ public class FileEditor {
     }
 
     public static int deleteColumnFile(String databaseName, String tableName, String columnName) {
-        File file = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName);
+        File file = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
         if(!file.exists()) {
             ZmdbLogger.log("Could not delete column " + columnName + " in table " + tableName + " in database " + databaseName + " because the file could not be found.");
             return 0;

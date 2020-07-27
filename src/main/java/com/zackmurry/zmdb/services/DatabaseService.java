@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,140 +95,51 @@ public class DatabaseService {
         //todo defo want to make this into a function / use a constructor to set values
         //todo add UUID type (maybe add option to auto-generate it)
 
-        int out;
+
 
         //yikes 0.0
-        switch(protoColumn.getType()) {
-            case "Boolean":
-                Column<Boolean> column1 = new Column<>();
-                column1.setTableName(tableName);
-                column1.setDatabaseName(databaseName);
-                column1.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column1);
-                break;
-            case "String":
-                Column<String> column2 = new Column<>();
-                column2.setTableName(tableName);
-                column2.setDatabaseName(databaseName);
-                column2.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column2);
-                break;
-            case "Integer":
-                Column<Integer> column3 = new Column<>();
-                column3.setTableName(tableName);
-                column3.setDatabaseName(databaseName);
-                column3.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column3);
-                break;
-            case "Double":
-                Column<Double> column4 = new Column<>();
-                column4.setTableName(tableName);
-                column4.setDatabaseName(databaseName);
-                column4.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column4);
-            case "Float":
-                Column<Float> column5 = new Column<>();
-                column5.setTableName(tableName);
-                column5.setDatabaseName(databaseName);
-                column5.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column5);
-                break;
-            case "Character":
-                Column<Character> column6 = new Column<>();
-                column6.setTableName(tableName);
-                column6.setDatabaseName(databaseName);
-                column6.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column6);
-                break;
-            case "Byte":
-                Column<Byte> column7 = new Column<>();
-                column7.setTableName(tableName);
-                column7.setDatabaseName(databaseName);
-                column7.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column7);
-                break;
-            case "Short":
-                Column<Short> column8 = new Column<>();
-                column8.setTableName(tableName);
-                column8.setDatabaseName(databaseName);
-                column8.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column8);
-                break;
-            case "Long":
-                Column<Long> column9 = new Column<>();
-                column9.setTableName(tableName);
-                column9.setDatabaseName(databaseName);
-                column9.setName(protoColumn.getName());
-                out = databaseDao.addColumnToTable(databaseName, tableName, column9);
-                break;
-            default:
-                out = DatabaseDataAccessService.OPERATION_FAIL_VALUE;
-                break;
+        Optional<Column<?>> optionalColumn = buildColumn(protoColumn.getType(), databaseName, tableName, protoColumn.getName());
+        if(optionalColumn.isEmpty()) {
+            ZmdbLogger.log("Couldn't add column " + protoColumn.getName() + " to table " + tableName + " in database " +  databaseName + " because the specified type doesn't exist or is not supported.");
+            return 0;
         }
-
-        if(out == DatabaseDataAccessService.OPERATION_SUCCESS_VALUE) fileEditor.newColumnFile(databaseName, tableName, protoColumn.getName(), protoColumn.getType());
-
-        return out;
+        if(databaseDao.addColumnToTable(databaseName, tableName, optionalColumn.get()) != 1) {
+            return 0;
+        }
+        return fileEditor.newColumnFile(databaseName, tableName, protoColumn.getName(), protoColumn.getType());
     }
 
     public int includeColumnInTable(String databaseName, String tableName, ProtoColumn protoColumn) {
-        switch(protoColumn.getType()) {
+        Optional<Column<?>> optionalColumn = buildColumn(protoColumn.getType(), databaseName, tableName, protoColumn.getName());
+        if(optionalColumn.isEmpty()) {
+            ZmdbLogger.log("Couldn't include column " + protoColumn.getName() + " in table " + tableName + " in database " + databaseName + " because the specified type doesn't exist or is not supported.");
+            return 0;
+        }
+        return databaseDao.addColumnToTable(databaseName, tableName, optionalColumn.get());
+    }
+
+    public Optional<Column<?>> buildColumn(String type, String databaseName, String tableName, String name) {
+        switch(type) {
             case "Boolean":
-                Column<Boolean> column1 = new Column<>();
-                column1.setTableName(tableName);
-                column1.setDatabaseName(databaseName);
-                column1.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column1);
+                return Optional.of(new Column<Boolean>(databaseName, tableName, name));
             case "String":
-                Column<String> column2 = new Column<>();
-                column2.setTableName(tableName);
-                column2.setDatabaseName(databaseName);
-                column2.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column2);
+                return Optional.of(new Column<String>(databaseName, tableName, name));
             case "Integer":
-                Column<Integer> column3 = new Column<>();
-                column3.setTableName(tableName);
-                column3.setDatabaseName(databaseName);
-                column3.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column3);
+                return Optional.of(new Column<Integer>(databaseName, tableName, name));
             case "Double":
-                Column<Double> column4 = new Column<>();
-                column4.setTableName(tableName);
-                column4.setDatabaseName(databaseName);
-                column4.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column4);
+                return Optional.of(new Column<Double>(databaseName, tableName, name));
             case "Float":
-                Column<Float> column5 = new Column<>();
-                column5.setTableName(tableName);
-                column5.setDatabaseName(databaseName);
-                column5.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column5);
+                return Optional.of(new Column<Float>(databaseName, tableName, name));
             case "Character":
-                Column<Character> column6 = new Column<>();
-                column6.setTableName(tableName);
-                column6.setDatabaseName(databaseName);
-                column6.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column6);
+                return Optional.of(new Column<Character>(databaseName, tableName, name));
             case "Byte":
-                Column<Byte> column7 = new Column<>();
-                column7.setTableName(tableName);
-                column7.setDatabaseName(databaseName);
-                column7.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column7);
+                return Optional.of(new Column<Byte>(databaseName, tableName, name));
             case "Short":
-                Column<Short> column8 = new Column<>();
-                column8.setTableName(tableName);
-                column8.setDatabaseName(databaseName);
-                column8.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column8);
+                return Optional.of(new Column<Short>(databaseName, tableName, name));
             case "Long":
-                Column<Long> column9 = new Column<>();
-                column9.setTableName(tableName);
-                column9.setDatabaseName(databaseName);
-                column9.setName(protoColumn.getName());
-                return databaseDao.addColumnToTable(databaseName, tableName, column9);
+                return Optional.of(new Column<Long>(databaseName, tableName, name));
             default:
-                return DatabaseDataAccessService.OPERATION_FAIL_VALUE;
+                return Optional.empty();
         }
     }
 

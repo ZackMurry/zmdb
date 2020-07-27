@@ -15,14 +15,18 @@ public class Column<T> {
     private String databaseName;
     private String tableName;
 
+    public Column() {
 
+    }
 
     public Column(String name) {
         this.name = name;
     }
 
-    public Column() {
-
+    public Column(String databaseName, String tableName, String name) {
+        this.databaseName = databaseName;
+        this.tableName = tableName;
+        this.name = name;
     }
 
     public int getNumberOfRows() {
