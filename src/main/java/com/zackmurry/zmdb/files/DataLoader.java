@@ -92,8 +92,8 @@ public class DataLoader {
                         //reading rows of columns
                         String[] rows = FileReading.getAllLinesButFirst(columnFile).split(FileEditor.VALUE_SEPARATOR);
                         for (String row : rows) {
-                            if(row.equals(" ")) continue;
                             while(row.startsWith(" ")) row = row.substring(1);
+                            if(row.equals("")) continue;
                             if(databaseService.includeRowInColumn(databaseFile.getName(), tableFile.getName(), columnFile.getName().replace(".txt", ""), row) != 1) {
                                 ZmdbLogger.log("Failed to include row with data " + row + ".");
                                 return 0;

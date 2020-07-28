@@ -1,8 +1,11 @@
 package com.zackmurry.zmdb;
 
+import com.zackmurry.zmdb.entities.auto.AutoFactory;
 import com.zackmurry.zmdb.files.DataLoader;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.UUID;
 
 /**
  * not done:

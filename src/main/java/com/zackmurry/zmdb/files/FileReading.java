@@ -105,5 +105,16 @@ public class FileReading {
         return -1;
     }
 
+    public static String getTypeFromColumn(String databaseName, String tableName, String columnName) {
+        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
+        if(!columnFile.exists()) {
+            ZmdbLogger.log("Couldn't get type from column " + columnName + " in table " + tableName + " in database " + databaseName + " because the file couldn't be found.");
+            return "";
+        }
+        String firstLine = readFirstLine(columnFile);
+        firstLine = firstLine.replace(FileEditor.TYPE_INDICATOR, "");
+        return firstLine;
+    }
+
 
 }

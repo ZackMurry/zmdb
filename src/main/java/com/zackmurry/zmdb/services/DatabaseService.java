@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DatabaseService {
@@ -121,8 +118,6 @@ public class DatabaseService {
      * @return returns the built column
      */
     public Optional<Column<?>> buildColumn(String type, String databaseName, String tableName, String name) {
-        //todo add UUID type (maybe add option to auto-generate it)
-
         switch(type) {
             case "Boolean":
                 return Optional.of(new Column<Boolean>(databaseName, tableName, name));
@@ -142,6 +137,10 @@ public class DatabaseService {
                 return Optional.of(new Column<Short>(databaseName, tableName, name));
             case "Long":
                 return Optional.of(new Column<Long>(databaseName, tableName, name));
+            case "UUID":
+                return Optional.of(new Column<UUID>(databaseName, tableName, name));
+            case "UUID-auto":
+                return Optional.of(new Column<UUID>(databaseName, tableName, name, true));
             default:
                 return Optional.empty();
         }
