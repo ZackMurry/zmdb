@@ -309,4 +309,9 @@ public class DatabaseService {
         FileEditor.setIndexOfTable(new File(tableFile.getPath() + "/details.txt"), "NULL"); //clearing the index column
         return databaseDao.deleteAllColumnsInTable(databaseName, tableName);
     }
+
+
+    public ArrayList<?> getAllRowsInColumn(String databaseName, String tableName, String columnName) {
+        return databaseDao.getAllRowsInColumn(databaseName, tableName, columnName);
+    }
 }

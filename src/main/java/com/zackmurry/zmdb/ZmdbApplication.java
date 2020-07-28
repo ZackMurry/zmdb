@@ -8,11 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * not done:
  * password encoding
  * put mapping
- * validating if a row with certain details exists
- * deleting dbs/tables/columns/rows
- * delete all databases/tables/columns
  * delete column by type
- *
  */
 
 

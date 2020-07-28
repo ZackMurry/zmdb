@@ -139,4 +139,9 @@ public class DatabaseController {
     public int deleteAllColumnsInTable(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName) {
         return databaseService.deleteAllColumnsInTable(databaseName, tableName);
     }
+
+    @GetMapping("/databases/{databaseName}/tables/{tableName}/columns/{columnName}/rows")
+    public ArrayList<?> getAllRowsInColumn(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName) {
+        return databaseService.getAllRowsInColumn(databaseName, tableName, columnName);
+    }
 }

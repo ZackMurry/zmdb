@@ -300,5 +300,15 @@ public class DatabaseDataAccessService implements DatabaseDao {
         return 1;
     }
 
+    @Override
+    public ArrayList<?> getAllRowsInColumn(String databaseName, String tableName, String columnName) {
+        Optional<Column<?>> optionalColumn = getColumn(databaseName, tableName, columnName);
+        if(optionalColumn.isEmpty()) {
+            ZmdbLogger.log("Couldn't get all rows from column " + columnName + " from table " + tableName + " in database " + databaseName + " because the column could not be found.");
+            return new ArrayList<>();
+        }
+        return optionalColumn.get().getAllRows();
+    }
+
 
 }
