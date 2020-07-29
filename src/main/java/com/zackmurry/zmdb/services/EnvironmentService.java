@@ -1,6 +1,6 @@
 package com.zackmurry.zmdb.services;
 
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.files.FileEditor;
 import com.zackmurry.zmdb.settings.CustomizationPort;
 import org.springframework.beans.factory.annotation.Autowired;

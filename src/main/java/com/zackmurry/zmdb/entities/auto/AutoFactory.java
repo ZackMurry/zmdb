@@ -10,6 +10,9 @@ public class AutoFactory<T> {
 
     private final Class<T> type;
 
+    /**
+     * @param type in the form Object.class (for example, UUID.class)
+     */
     //a bit redundant but it's the only way i could get it to work
     public AutoFactory(Class<T> type) {
         this.type = type;
@@ -19,7 +22,6 @@ public class AutoFactory<T> {
         if(UUID.class.equals(type)) {
             return (T) UUID.randomUUID();
         }
-
 
         //if nothing matches
         return null;

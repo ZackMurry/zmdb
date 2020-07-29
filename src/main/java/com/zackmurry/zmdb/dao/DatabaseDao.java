@@ -64,4 +64,7 @@ public interface DatabaseDao {
     int deleteAllColumnsInTable(String databaseName, String tableName);
 
     ArrayList<?> getAllRowsInColumn(String databaseName, String tableName, String columnName);
+
+    Optional<Column<?>> getColumnFromRequestPath(String requestPath);
+
 }

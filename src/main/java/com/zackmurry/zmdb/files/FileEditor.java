@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.files;
 
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.entities.Column;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.settings.CustomizationPort;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -34,7 +35,7 @@ public class FileEditor {
      * @param name name of file
      * adds a new top-level file
      */
-    public int newDatabaseFile(String name) {
+    public static int newDatabaseFile(String name) {
         File dbFile = new File("data/databases/" + name);
 
         if(!dbFile.exists()) {
@@ -79,7 +80,7 @@ public class FileEditor {
         return 1;
     }
 
-    public int newColumnFile(String databaseName, String tableName, String columnName, String columnType) {
+    public static int newColumnFile(String databaseName, String tableName, String columnName, String columnType) {
         File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
         if(!tableFile.exists()) {
             ZmdbLogger.log("Cannot create column: table file doesn't exist.");
@@ -433,6 +434,54 @@ public class FileEditor {
             return CustomizationPort.DEFAULT_PORT;
         }
         return FileReading.readIntFromIndex(settingsFile, PORT_INDICATOR);
+    }
+
+    /**
+     *
+     * @param databaseName database to create file in
+     * @param tableName table to create file in
+     * @param columnName name of columnFile
+     * @param column column details to use (useful for rows)
+     * @param columnType type of column
+     * @return
+     */
+    public static int newColumnFileFromColumnObject(String databaseName, String tableName, String columnName, Column<?> column, String columnType) {
+        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
+        if(columnFile.exists()) {
+            ZmdbLogger.log("Cannot create column file: column file already exists.");
+            return 0;
+        }
+        try {
+            if(!columnFile.createNewFile()) {
+                ZmdbLogger.log("Could not create a column file for column " + columnName + " for some reason.");
+                return 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        writeToFile(TYPE_INDICATOR + columnType + "\n", columnFile);
+        for(Object row : column.getAllRows()) {
+            if(writeToColumn(row.toString(), databaseName, tableName, columnName) != 1) {
+                ZmdbLogger.log("Error writing rows to column file " + columnName + ".");
+                return 0;
+            }
+        }
+
+        //setting the index of the table to column.getName() if this is the only column there
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        File[] listOfTableFiles = tableFile.listFiles();
+        if(listOfTableFiles == null) {
+            ZmdbLogger.log("Error: file for table " + tableName + " has no subdirectories when it should have at least two.");
+            return 0;
+        }
+
+        if(listOfTableFiles.length == 2) {
+            File tableDetailsFile = new File("data/databases/" + databaseName + "/" + tableName + "/details.txt");
+            return setIndexOfTable(tableDetailsFile, columnName);
+        }
+
+        return 1;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.zackmurry.zmdb.files;
 
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -114,6 +114,11 @@ public class FileReading {
         String firstLine = readFirstLine(columnFile);
         firstLine = firstLine.replace(FileEditor.TYPE_INDICATOR, "");
         return firstLine;
+    }
+
+    public static boolean columnExists(String databaseName, String tableName, String columnName) {
+        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
+        return columnFile.exists();
     }
 
 

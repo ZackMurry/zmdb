@@ -1,5 +1,6 @@
 package com.zackmurry.zmdb.controller;
 
+import com.zackmurry.zmdb.controller.proto.ProtoRequestPath;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.controller.proto.ProtoString;
 import com.zackmurry.zmdb.entities.Column;
@@ -144,4 +145,11 @@ public class DatabaseController {
     public ArrayList<?> getAllRowsInColumn(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName) {
         return databaseService.getAllRowsInColumn(databaseName, tableName, columnName);
     }
+
+    @PostMapping("/databases/{databaseName}/tables/{tableName}/columns/{columnName}/paste")
+    public int copyPasteColumn(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName, @RequestBody ProtoRequestPath protoRequestPath) {
+        return databaseService.copyPasteColumn(databaseName, tableName, columnName, protoRequestPath.getPath());
+    }
+
+
 }

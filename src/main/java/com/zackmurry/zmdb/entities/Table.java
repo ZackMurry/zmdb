@@ -1,8 +1,7 @@
 package com.zackmurry.zmdb.entities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;

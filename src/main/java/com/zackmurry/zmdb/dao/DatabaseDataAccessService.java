@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.dao;
 
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.tools.RequestPathHelper;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
@@ -18,7 +19,8 @@ import java.util.Optional;
  *
  * contains
  * NULL
- *
+ * cannot contain '/'
+ * must be at least one char
  *
  */
 
@@ -101,7 +103,7 @@ public class DatabaseDataAccessService implements DatabaseDao {
         Optional<Table> tableOptional = db.get().getTables().stream().filter(table -> table.getName().equals(tableName)).findFirst();
         if(tableOptional.isEmpty()) return OPERATION_FAIL_VALUE;
         if(tableOptional.get().getColumnByName(column.getName()).isPresent()) {
-            ZmdbLogger.log("Cannot create table with name " + column.getName() + " in table " + tableName + " in database " + databaseName + " as one already exists with the same name.");
+            ZmdbLogger.log("Cannot create column with name " + column.getName() + " in table " + tableName + " in database " + databaseName + " as one already exists with the same name.");
             return OPERATION_FAIL_VALUE;
         }
         tableOptional.get().addColumn(column);
@@ -308,6 +310,22 @@ public class DatabaseDataAccessService implements DatabaseDao {
             return new ArrayList<>();
         }
         return optionalColumn.get().getAllRows();
+    }
+
+    /**
+     * gets a column from a specified request path
+     * @param requestPath the path that you would enter into the http request
+     * @return a column if it finds one
+     */
+    @Override
+    public Optional<Column<?>> getColumnFromRequestPath(String requestPath) {
+        //getting database from request path
+        String databaseName = RequestPathHelper.getDatabaseNameFromRequestPath(requestPath);
+
+        //now getting the table
+        return Optional.empty();
+
+
     }
 
 

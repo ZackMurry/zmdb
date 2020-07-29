@@ -1,6 +1,6 @@
 package com.zackmurry.zmdb.settings;
 
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.files.FileEditor;
 import com.zackmurry.zmdb.files.FileReading;
 import org.springframework.beans.factory.annotation.Autowired;

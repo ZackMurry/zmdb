@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.services;
 
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.tools.RequestPathHelper;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.files.FileEditor;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.dao.DatabaseDao;
@@ -33,7 +34,7 @@ public class DatabaseService {
             return 0;
         }
         //adding a new file with the database's name
-        if(fileEditor.newDatabaseFile(database.getName()) != 1) {
+        if(FileEditor.newDatabaseFile(database.getName()) != 1) {
             return 0;
         }
         return databaseDao.addDatabase(database);
@@ -97,7 +98,7 @@ public class DatabaseService {
         if(databaseDao.addColumnToTable(databaseName, tableName, optionalColumn.get()) != 1) {
             return 0;
         }
-        return fileEditor.newColumnFile(databaseName, tableName, protoColumn.getName(), protoColumn.getType());
+        return FileEditor.newColumnFile(databaseName, tableName, protoColumn.getName(), protoColumn.getType());
     }
 
     public int includeColumnInTable(String databaseName, String tableName, ProtoColumn protoColumn) {
@@ -312,5 +313,44 @@ public class DatabaseService {
 
     public ArrayList<?> getAllRowsInColumn(String databaseName, String tableName, String columnName) {
         return databaseDao.getAllRowsInColumn(databaseName, tableName, columnName);
+    }
+
+    /**
+     * @param databaseName database to copy to
+     * @param tableName table to copy to
+     * @param columnName column to copy to (doesn't have to exist)
+     * @param copyFromPath path to copy from
+     * @return 1 for success, 0 for fail
+     */
+    public int copyPasteColumn(String databaseName, String tableName, String columnName, String copyFromPath) {
+        //if i don't need to create a column (because it already exists)
+        if(FileReading.columnExists(databaseName, tableName, columnName)) {
+            //just delete the target column and move on bc why would i change the file name and replace all the text when i could just
+            //delete it and move on like normal:)
+            Optional<Column<?>> optionalColumn = databaseDao.getColumn(databaseName, tableName, columnName);
+            if(optionalColumn.isEmpty()) {
+                //this would mean that the arraylist doesn't have a column but the file path does
+                ZmdbLogger.log("Error: files and internal data out of sync. Please restart.");
+                return 0;
+            }
+            databaseDao.deleteColumnByName(databaseName, tableName, columnName);
+
+            FileEditor.deleteColumnFile(databaseName, tableName, columnName);
+        }
+
+        String copyFromDatabaseName = RequestPathHelper.getDatabaseNameFromRequestPath(copyFromPath);
+        String copyFromTableName = RequestPathHelper.getTableNameFromRequestPath(copyFromPath, copyFromDatabaseName);
+        String copyFromColumnName = RequestPathHelper.getColumnNameFromRequestPath(copyFromPath, copyFromDatabaseName, copyFromTableName);
+
+        //this is the column that is being copied
+        Optional<Column<?>> optionalColumn = databaseDao.getColumn(copyFromDatabaseName, copyFromTableName, copyFromColumnName);
+        if(optionalColumn.isEmpty()) {
+            ZmdbLogger.log("Unable to find column " + columnName + " in any databases. Retrieved from path " + copyFromPath + ".");
+            return 0;
+        }
+        Column<?> copyFromColumn = optionalColumn.get();
+        copyFromColumn.setName(columnName); //changes name of file because we're copying the data, not exactly the name
+        databaseDao.addColumnToTable(databaseName, tableName, copyFromColumn);
+        return FileEditor.newColumnFileFromColumnObject(databaseName, tableName, columnName, copyFromColumn, FileReading.getTypeFromColumn(copyFromDatabaseName, copyFromTableName, copyFromColumnName));
     }
 }

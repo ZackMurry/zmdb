@@ -1,4 +1,4 @@
-package com.zackmurry.zmdb;
+package com.zackmurry.zmdb.tools;
 
 import com.zackmurry.zmdb.files.FileEditor;
 

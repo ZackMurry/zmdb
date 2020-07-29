@@ -1,6 +1,6 @@
 package com.zackmurry.zmdb.files;
 
-import com.zackmurry.zmdb.ZmdbLogger;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoColumn;
 import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.entities.Table;
