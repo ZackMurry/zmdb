@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * password encoding
  * put mapping
  * delete column by type
- * copying tables and databases
+ * copying databases
  * maybe adding cutting and pasting too
  * make index rows unique
  * remove row by id from index column

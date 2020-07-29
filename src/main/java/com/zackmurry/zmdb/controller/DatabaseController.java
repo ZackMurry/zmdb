@@ -15,11 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * todo:
- * getTable
- *
- */
 
 @RestController
 public class DatabaseController {
@@ -43,12 +38,10 @@ public class DatabaseController {
         return databaseService.getDatabaseCount();
     }
 
-    //todo this returns tableCount, but not the tables
     @GetMapping("/databases/{name}")
     public Optional<Database> getDatabaseByName(@PathVariable(name="name") String name) {
         return databaseService.getDatabaseByName(name);
     }
-
 
     @PostMapping("/databases/{databaseName}/tables")
     public int addTable(@PathVariable String databaseName, @RequestBody Table table) {
@@ -85,7 +78,6 @@ public class DatabaseController {
         return databaseService.getColumnByName(databaseName, tableName, columnName);
     }
 
-    //todo probly change this to include order
     @GetMapping("/databases/{databaseName}/tables/{tableName}/contains")
     public boolean tableContains(@PathVariable(name="databaseName") String databaseName, @PathVariable(name="tableName") String tableName, @RequestBody ProtoRow protoRow) {
         return databaseService.tableContains(databaseName, tableName, protoRow);

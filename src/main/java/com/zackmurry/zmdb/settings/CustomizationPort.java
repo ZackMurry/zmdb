@@ -21,7 +21,6 @@ public class CustomizationPort implements WebServerFactoryCustomizer<Configurabl
     ConfigurableServletWebServerFactory configurableServletWebServerFactory;
 
     //setting default port
-    //todo need a settings doc to store the preferred port
     @Override
     public void customize(ConfigurableServletWebServerFactory server) {
         PORT = FileReading.readIntFromIndex(new File("settings.txt"), FileEditor.PORT_INDICATOR); //throws an error if there's no settings.txt file, but that fixes itself

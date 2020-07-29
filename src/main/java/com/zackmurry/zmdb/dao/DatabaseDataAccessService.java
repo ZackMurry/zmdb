@@ -337,9 +337,9 @@ public class DatabaseDataAccessService implements DatabaseDao {
         optionalDatabase.get().setName(newDatabaseName);
         for(Table table : optionalDatabase.get().getTables()) {
             //todo this would be a place i'd need to add databaseName in table
-
+            table.setDatabaseName(newDatabaseName);
             for(Column<?> column : table.getAllColumns()) {
-                column.setDatabaseName(databaseName);
+                column.setDatabaseName(newDatabaseName);
             }
         }
         return 1;
@@ -367,6 +367,13 @@ public class DatabaseDataAccessService implements DatabaseDao {
             return 0;
         }
         optionalColumn.get().setName(newColumnName);
+
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) return 0; //won't happen
+        if(optionalTable.get().getIndexColumnName().equals(columnName)) {
+            optionalTable.get().setIndexColumn(newColumnName);
+        }
+
         return 1;
     }
 
