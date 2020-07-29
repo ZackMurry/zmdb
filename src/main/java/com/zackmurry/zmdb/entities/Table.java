@@ -10,13 +10,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Table {
+public class Table implements Cloneable {
 
     private String name;
 
     private List<Column<?>> columns = new ArrayList<>();
 
-    //private String databaseName; todo add this probs
+    private String databaseName;
 
     private int indexOfIndexColumn = 0; //todo require index columns to have all unique values (useful for searching values in tables)
 
@@ -199,4 +199,17 @@ public class Table {
     public String getIndexColumnName() {
         return columns.get(indexOfIndexColumn).getName();
     }
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
+    }
+
 }

@@ -2,13 +2,12 @@ package com.zackmurry.zmdb.entities;
 
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-public class Database {
+public class Database implements Cloneable {
 
     private String name;
-    private List<Table> tables = new ArrayList<>();
+    private ArrayList<Table> tables = new ArrayList<>();
 
     public Database(String name) {
         this.name = name;
@@ -27,6 +26,7 @@ public class Database {
     }
 
     public void addTable(Table table) {
+        table.setDatabaseName(this.name);
         tables.add(table);
     }
 
@@ -46,7 +46,7 @@ public class Database {
         return tables.size();
     }
 
-    public List<Table> getTables() {
+    public ArrayList<Table> getTables() {
         return this.tables;
     }
 

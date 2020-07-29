@@ -151,6 +151,11 @@ public class DatabaseController {
         return databaseService.copyPasteColumn(databaseName, tableName, columnName, protoRequestPath.getPath());
     }
 
+    @PostMapping("/databases/{databaseName}/tables/{tableName}/paste")
+    public int copyPasteTable(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @RequestBody ProtoRequestPath protoRequestPath) {
+        return databaseService.copyPasteTable(databaseName, tableName, protoRequestPath.getPath());
+    }
+
     @RequestMapping(value = "/databases/{databaseName}", method = RequestMethod.PATCH)
     public int renameDatabase(@PathVariable String databaseName, @RequestBody ProtoString protoString) {
         return databaseService.renameDatabase(databaseName, protoString.getName());

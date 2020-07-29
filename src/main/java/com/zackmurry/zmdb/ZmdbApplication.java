@@ -11,11 +11,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * delete column by type
  * copying tables and databases
  * maybe adding cutting and pasting too
- * renaming stuff
  * make index rows unique
  * remove row by id from index column
  * maybe make index columns optional
- * add databaseName for each table
  */
 
 

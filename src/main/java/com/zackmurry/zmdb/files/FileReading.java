@@ -2,6 +2,7 @@ package com.zackmurry.zmdb.files;
 
 import com.zackmurry.zmdb.tools.ZmdbLogger;
 
+import javax.print.DocFlavor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -119,6 +120,11 @@ public class FileReading {
     public static boolean columnExists(String databaseName, String tableName, String columnName) {
         File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
         return columnFile.exists();
+    }
+
+    public static boolean tableExists(String databaseName, String tableName) {
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        return tableFile.exists();
     }
 
     public static String getTableIndexColumn(String databaseName, String tableName) {

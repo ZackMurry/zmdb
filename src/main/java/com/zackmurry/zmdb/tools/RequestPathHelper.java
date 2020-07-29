@@ -22,6 +22,10 @@ public class RequestPathHelper {
         return substringStringFromZeroToFirstSlash(tableName);
     }
 
+    public static String getTableNameFromRequestPathWithoutFinalSlash(String requestPath, String databaseName) {
+        return requestPath.replace("/databases/" + databaseName + "/tables/", "");
+    }
+
     public static String getColumnNameFromRequestPath(String requestPath) {
         return requestPath.replace("/databases/" + getDatabaseNameFromRequestPath(requestPath) + "/tables/" + getTableNameFromRequestPath(requestPath) + "/columns/","");
     }

@@ -60,6 +60,7 @@ public class DatabaseDataAccessService implements DatabaseDao {
     public int addTable(Table table, String databaseName) {
         Optional<Database> optionalDatabase = getDatabaseByName(databaseName);
         if(optionalDatabase.isEmpty()) {
+            ZmdbLogger.log("Unable to add table to database " + databaseName + " because the database could not be found.");
             return OPERATION_FAIL_VALUE;
         }
         Database database = optionalDatabase.get();

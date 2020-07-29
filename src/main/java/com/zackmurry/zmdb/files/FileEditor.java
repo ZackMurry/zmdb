@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.files;
 
 import com.zackmurry.zmdb.entities.Column;
+import com.zackmurry.zmdb.entities.Table;
 import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
 import com.zackmurry.zmdb.settings.CustomizationPort;
@@ -46,7 +47,7 @@ public class FileEditor {
         return 1;
     }
 
-    public int newTableFile(String databaseName, String tableName) {
+    public static int newTableFile(String databaseName, String tableName) {
         File dbFile = new File("data/databases/" + databaseName);
         if(!dbFile.exists()) {
             ZmdbLogger.log("Cannot create table: database file doesn't exist.");
@@ -480,6 +481,43 @@ public class FileEditor {
         if(listOfTableFiles.length == 2) {
             File tableDetailsFile = new File("data/databases/" + databaseName + "/" + tableName + "/details.txt");
             return setIndexOfTable(tableDetailsFile, columnName);
+        }
+
+        return 1;
+    }
+
+    public static int newTableFileFromTableObject(String databaseName, String tableName, Table table, File originalTableFile) {
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        if(tableFile.exists()) {
+            ZmdbLogger.log("Cannot create table file: table file already exists.");
+            return 0;
+        }
+
+        if(newTableFile(databaseName, tableName) != 1) {
+            return 0;
+        }
+
+        File[] listOriginalTableFiles = originalTableFile.listFiles();
+
+        if(listOriginalTableFiles == null) {
+            ZmdbLogger.log("Error copying table: the original table should have at least one subdirectory.");
+            return 0;
+        }
+
+        for(File columnFile : listOriginalTableFiles) {
+            try {
+                //you have to create each file before you copy it for some reason
+                //File newColumnFile = new File("data/databases/")
+
+                Files.copy(
+                        Paths.get(columnFile.getPath()),
+                        Paths.get(new File("data/databases/" + databaseName + "/" + tableName + "/" + columnFile.getName()).getPath()),
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+                ZmdbLogger.log("Unable to copy a column file to its destination.");
+                return 0;
+            }
         }
 
         return 1;
