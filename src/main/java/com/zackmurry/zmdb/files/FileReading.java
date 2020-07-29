@@ -121,5 +121,12 @@ public class FileReading {
         return columnFile.exists();
     }
 
-
+    public static String getTableIndexColumn(String databaseName, String tableName) {
+        File detailsFile = new File("data/databases/" + databaseName + "/" + tableName + "/details.txt");
+        if(!detailsFile.exists()) {
+            ZmdbLogger.log("Unable to get index column from table " + tableName + " in database " + databaseName + " because the details file couldn't be found.");
+            return "";
+        }
+        return readFirstLine(detailsFile).replace(FileEditor.INDEX_INDICATOR, "");
+    }
 }

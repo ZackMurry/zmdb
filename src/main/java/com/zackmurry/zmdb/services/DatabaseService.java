@@ -353,4 +353,29 @@ public class DatabaseService {
         databaseDao.addColumnToTable(databaseName, tableName, copyFromColumn);
         return FileEditor.newColumnFileFromColumnObject(databaseName, tableName, columnName, copyFromColumn, FileReading.getTypeFromColumn(copyFromDatabaseName, copyFromTableName, copyFromColumnName));
     }
+
+    public int renameDatabase(String databaseName, String newDatabaseName) {
+        if(FileEditor.renameDatabaseFile(databaseName, newDatabaseName) != 1) {
+            ZmdbLogger.log("Unable to rename the file for database " + databaseName + " for some reason.");
+            return 0;
+        }
+        return databaseDao.renameDatabase(databaseName, newDatabaseName);
+    }
+
+    public int renameTable(String databaseName, String tableName, String newTableName) {
+        if(FileEditor.renameTableFile(databaseName, tableName, newTableName) != 1) {
+            ZmdbLogger.log("Unable to rename the file for table " + tableName + " in database " + databaseName + " for some reason.");
+            return 0;
+        }
+        return databaseDao.renameTable(databaseName, tableName, newTableName);
+    }
+
+    public int renameColumn(String databaseName, String tableName, String columnName, String newColumnName) {
+        if(FileEditor.renameColumnFile(databaseName, tableName, columnName, newColumnName) != 1) {
+            ZmdbLogger.log("Unable to rename the file for column " + columnName + " in table " + tableName + "  in database " + databaseName + " for some reason.");
+            return 0;
+        }
+        return databaseDao.renameColumn(databaseName, tableName, columnName, newColumnName);
+    }
+
 }

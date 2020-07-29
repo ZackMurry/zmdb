@@ -321,11 +321,52 @@ public class DatabaseDataAccessService implements DatabaseDao {
     public Optional<Column<?>> getColumnFromRequestPath(String requestPath) {
         //getting database from request path
         String databaseName = RequestPathHelper.getDatabaseNameFromRequestPath(requestPath);
+        String tableName = RequestPathHelper.getTableNameFromRequestPath(requestPath, databaseName);
+        String columnName = RequestPathHelper.getColumnNameFromRequestPath(requestPath, databaseName, tableName);
+        return getColumn(databaseName, tableName, columnName);
+    }
 
-        //now getting the table
-        return Optional.empty();
+    @Override
+    public int renameDatabase(String databaseName, String newDatabaseName) {
+        Optional<Database> optionalDatabase = getDatabaseByName(databaseName);
+        if(optionalDatabase.isEmpty()) {
+            ZmdbLogger.log("Couldn't rename database " + databaseName + " because the database couldn't be found.");
+            return 0;
+        }
+        optionalDatabase.get().setName(newDatabaseName);
+        for(Table table : optionalDatabase.get().getTables()) {
+            //todo this would be a place i'd need to add databaseName in table
 
+            for(Column<?> column : table.getAllColumns()) {
+                column.setDatabaseName(databaseName);
+            }
+        }
+        return 1;
+    }
 
+    @Override
+    public int renameTable(String databaseName, String tableName, String newTableName) {
+        Optional<Table> optionalTable = getTable(databaseName, tableName);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Couldn't rename table " + tableName + " in database " + databaseName + " because the file couldn't be found.");
+            return 0;
+        }
+        optionalTable.get().setName(newTableName);
+        for(Column<?> column : optionalTable.get().getAllColumns()) {
+            column.setTableName(newTableName);
+        }
+        return 1;
+    }
+
+    @Override
+    public int renameColumn(String databaseName, String tableName, String columnName, String newColumnName) {
+        Optional<Column<?>> optionalColumn = getColumn(databaseName, tableName, columnName);
+        if(optionalColumn.isEmpty()) {
+            ZmdbLogger.log("Couldn't rename column " + columnName + " in table " + tableName + " in database " + databaseName + " because the file couldn't be found.");
+            return 0;
+        }
+        optionalColumn.get().setName(newColumnName);
+        return 1;
     }
 
 

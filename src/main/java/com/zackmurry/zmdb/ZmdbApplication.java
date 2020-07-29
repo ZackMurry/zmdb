@@ -1,12 +1,8 @@
 package com.zackmurry.zmdb;
 
-import com.zackmurry.zmdb.entities.auto.AutoFactory;
 import com.zackmurry.zmdb.files.DataLoader;
-import com.zackmurry.zmdb.tools.RequestPathHelper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.UUID;
 
 /**
  * not done:
@@ -16,6 +12,10 @@ import java.util.UUID;
  * copying tables and databases
  * maybe adding cutting and pasting too
  * renaming stuff
+ * make index rows unique
+ * remove row by id from index column
+ * maybe make index columns optional
+ * add databaseName for each table
  */
 
 
@@ -25,7 +25,7 @@ public class ZmdbApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ZmdbApplication.class, args);
-		DataLoader dl = new DataLoader();
+		new DataLoader(); //loads all necessary data
 	}
 
 

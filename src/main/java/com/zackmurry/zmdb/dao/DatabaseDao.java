@@ -67,4 +67,10 @@ public interface DatabaseDao {
 
     Optional<Column<?>> getColumnFromRequestPath(String requestPath);
 
+    int renameDatabase(String databaseName, String newDatabaseName);
+
+    int renameTable(String databaseName, String tableName, String newTableName);
+
+    int renameColumn(String databaseName, String tableName, String columnName, String newColumnName);
+
 }

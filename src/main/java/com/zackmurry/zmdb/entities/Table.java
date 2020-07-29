@@ -16,6 +16,8 @@ public class Table {
 
     private List<Column<?>> columns = new ArrayList<>();
 
+    //private String databaseName; todo add this probs
+
     private int indexOfIndexColumn = 0; //todo require index columns to have all unique values (useful for searching values in tables)
 
     public Table(String name, Column<?>... columns) {

@@ -7,6 +7,7 @@ import com.zackmurry.zmdb.settings.CustomizationPort;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -481,6 +482,80 @@ public class FileEditor {
             return setIndexOfTable(tableDetailsFile, columnName);
         }
 
+        return 1;
+    }
+
+    public static int renameDatabaseFile(String databaseName, String newDatabaseName) {
+        System.out.println(databaseName + ", " + newDatabaseName);
+        File databaseFile = new File("data/databases/" + databaseName);
+        if(!databaseFile.isDirectory()) {
+            ZmdbLogger.log("Unable to rename database " + databaseName + " because the file could not be found.");
+            return 0;
+        }
+
+        //checking that the file that it's being renamed to doesn't already exist
+        File newDatabaseFile = new File("data/databases/" + newDatabaseName);
+        if(newDatabaseFile.isDirectory()) {
+            ZmdbLogger.log("Unable to rename database " + databaseName + " to " + newDatabaseName + " because a database already exists with the same name.");
+            return 0;
+        }
+
+        if(databaseFile.renameTo(newDatabaseFile)) {
+            return 1;
+        }
+        else {
+            ZmdbLogger.log("Unable to rename database " + databaseName + " to " + newDatabaseName + ". This might be because you have the file open in file explorer. Try closing it and trying again.");
+            return 0;
+        }
+
+    }
+
+    public static int renameTableFile(String databaseName, String tableName, String newTableName) {
+        File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
+        if(!tableFile.exists()) {
+            ZmdbLogger.log("Unable to rename table " + tableName + " because the file could not be found.");
+            return 0;
+        }
+
+        //checking that the there isn't already a table with the new name
+        File newTableFile = new File("data/databases/" + databaseName + "/" + newTableName);
+        if(newTableFile.exists()) {
+            ZmdbLogger.log("Unable to rename table " + tableName + " in database " + databaseName + " to " + newTableName + " because a table already exists with the same name in the same database.");
+            return 0;
+        }
+
+        if(tableFile.renameTo(newTableFile)) {
+            return 1;
+        }
+        else {
+            ZmdbLogger.log("Unable to rename table " + databaseName + " in database " + databaseName + " to " + newTableName + ". This might be because you have file open in file explorer. Try closing it and trying again.");
+            return 0;
+        }
+    }
+
+    public static int renameColumnFile(String databaseName, String tableName, String columnName, String newColumnName) {
+        File columnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + columnName + ".txt");
+        if(!columnFile.exists()) {
+            ZmdbLogger.log("Unable to rename column " + columnName + " in table " + tableName + " in database " + databaseName + " because the file could not be found.");
+            return 0;
+        }
+
+        //checking that there isn't already a column there with the new name
+        File newColumnFile = new File("data/databases/" + databaseName + "/" + tableName + "/" + newColumnName + ".txt");
+        if(newColumnFile.exists()) {
+            ZmdbLogger.log("Unable to rename column " + columnName + " in table " + tableName + " in database " + databaseName + " to " + newColumnName + " because a column already exists with the same name in the same place.");
+            return 0;
+        }
+
+        if(!columnFile.renameTo(newColumnFile)) {
+            ZmdbLogger.log("Unable to rename column " + columnName + " to " + newColumnName + " in table " + tableName + " in database " + databaseName + ". This might be because you have file open in file explorer. Try closing it and trying again.");
+            return 0;
+        }
+
+        //checking if the index column of the table is this column
+        if(FileReading.getTableIndexColumn(databaseName, tableName).equals(columnName)) {
+            return setIndexOfTable(new File("data/databases/" + databaseName + "/" + tableName + "/details.txt"), newColumnName);
+        }
         return 1;
     }
 
