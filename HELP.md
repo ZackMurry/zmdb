@@ -29,9 +29,9 @@ Returns 1 for successful and 0 for unsuccessful.
 
 Example:  
 POST localhost:9001/databases  
-<code>{  
+{  
     "name": "myDatabase"  
-}</code>  
+}  
 
 ### Add table
 
@@ -42,9 +42,9 @@ Returns 1 for successful and 0 for unsuccessful.
 
 Example:  
 POST localhost:9001/databases/myDatabase/tables  
-<code>{  
+{  
     "name": "myTable"  
-}</code>
+}
 
 ### Add column
 #### POST request to /databases/{databaseName}/tables/{myTable}/columns
@@ -54,13 +54,13 @@ Returns 1 for successful and 0 for unsuccessful.
 
 Example:   
 POST localhost:9001/databases/myDatabase/tables/myTables/columns  
-<code>{  
+{  
     "name": "myColumn",  
     "type": "String"  
-}</code>
+}
 
 Response:
-<code>1</code>
+1
 
 ### Get all databases
 
@@ -73,7 +73,7 @@ Example:
 GET localhost:9001/databases  
 
 Response:  
-<code>[  
+[  
     {  
         "name": "myDatabase",  
         "tables": [  
@@ -81,7 +81,7 @@ Response:
         ],  
         "tableCount": 1  
     }  
-]</code>
+]
 
 ### Add row to table
 
@@ -93,13 +93,13 @@ Returns 1 for successful, 0 for unsuccessful.
 
 Example:  
 POST localhost:9001/databases/myDatabase/tables/myTable  
-<code>{  
+{  
    "data": ["myRowColumn"],  
    "order": ["myColumn"]  
-}</code>
+}
 
 Response:
-<code>1</code>
+1
 
 
 ### Get number of databases
@@ -113,7 +113,7 @@ Example:
 GET localhost:9001/databases/count
 
 Response:
-<code>1</code>
+1
 
 
 ### Get database by name
@@ -127,13 +127,13 @@ Example:
 GET localhost:9001/databases/myDatabase
 
 Response:  
-<code>{  
+{  
     "name": "myDatabase",  
     "tables": [  
         ...  
     ],  
     "tableCount": 1  
-}</code>
+}
 
 ### Get table by name
 
@@ -146,7 +146,7 @@ Example:
 GET localhost:9001/databases/myDatabase/tables/myTable
 
 Response:  
-<code>{  
+{  
     "name": "myTable",  
     "databaseName": "myDatabase",  
     "indexOfIndexColumn": 0,  
@@ -158,7 +158,7 @@ Response:
     "allColumns": [  
         ...  
     ]  
-}</code>
+}
 
 ### Get column by name
 
@@ -171,7 +171,7 @@ Example:
 GET localhost:9001/databases/myDatabase/tables/myTable/columns/myColumn
 
 Response:  
-<code>{  
+{  
     "name": "myColumn",  
     "databaseName": "myDatabase",  
     "tableName": "myTable",  
@@ -180,7 +180,7 @@ Response:
     "allRows": [  
         "myRowColumn"  
     ]  
-}</code>
+}
 
 ### Get number of tables in a database
 
@@ -193,7 +193,7 @@ Example:
 GET localhost:9001/databases/myDatabase/count
 
 Response:
-<code>1</code>
+1
 
 ### Get tables from a database
 
@@ -206,7 +206,7 @@ Example:
 GET localhost:9001/databases/myDatabase/tables
 
 Response:  
-<code>[  
+[  
     {  
         "name": "myTable",  
         "databaseName": "myDatabase",  
@@ -220,7 +220,7 @@ Response:
             ...  
         ]  
     }  
-]</code>
+]
 
 
 ### See if a table contains a specific row
@@ -233,13 +233,13 @@ Returns a boolean value.
 
 Example:  
 GET localhost:9001/databases/myDatabase/tables/myTable/contains  
-<code>{  
+{  
     "data": ["myRowColumn"],  
     "order": ["myColumn"]  
-}</code>
+}
 
 Response:  
-<code>true</code>
+true
 
 
 ### Delete a database
@@ -253,7 +253,7 @@ Example:
 DELETE localhost:9001/databases/myDatabase
 
 Response:  
-<code>1</code>
+1
 
 ### Delete a table
 
@@ -266,7 +266,7 @@ Example:
 DELETE localhost:9001/databases/myDatabase/tables/myTable
 
 Response:  
-<code>1</code>
+1
 
 
 ### Delete a column
@@ -280,7 +280,7 @@ Example:
 DELETE localhost:9001/databases/myDatabase/tables/myTable
 
 Response:  
-<code>1</code>
+1
 
 
 ### Delete a row
@@ -293,13 +293,13 @@ Returns 1 for successful and 0 for unsuccessful
 
 Example:  
 DELETE localhost:9001/databases/myDatabase/tables/myTable/rows  
-<code>{  
+{  
     "data": ["myRowColumn", "myRow2"],  
     "order": ["myColumn", "mySecondColumn"]  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 #### DELETE request to /databases/{databaseName}/tables/{tableName}/rows/{index}
 Does not take a request body. The index is the index of the row that you want to delete, which can be found using GET requests.
@@ -310,7 +310,7 @@ Example:
 DELETE localhost:9001/databases/myDatabase/tables/myTable/rows/0
 
 Response:  
-<code>1</code>
+1
 
 
 ### Get index column
@@ -326,7 +326,7 @@ Example:
 GET localhost:9001/databases/myDatabase/tables/myTable/index
 
 Response:  
-<code>myColumn</code>
+myColumn
 
 
 ### Set index column
@@ -338,12 +338,12 @@ Returns 1 for successful and 0 for unsuccessful
 
 Example:  
 PUT localhost:9001/databases/myDatabase/tables/myTable/index  
-<code>{  
+{  
     "name": "OFF"  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 ### Delete all databases
 
@@ -356,7 +356,7 @@ Example:
 DELETE localhost:9001/databases
 
 Response:  
-<code>1</code>
+1
 
 
 ### Delete all tables in a database
@@ -370,7 +370,7 @@ Example:
 DELETE localhost:9001/databases/myDatabase/tables
 
 Response:  
-<code>1</code>
+1
 
 
 ### Delete all columns in a table
@@ -384,7 +384,7 @@ Example:
 DELETE localhost:9001/databases/myDatabase/tables/myTable/columns
 
 Response:  
-<code>1</code>
+1
 
 
 ### Get all the rows in a column
@@ -398,10 +398,10 @@ Example:
 GET localhost:9001/databases/myDatabase/tables/myTable/columns/myColumn/rows
 
 Response:  
-<code>[  
+[  
     "myFirstRow1",  
     "mySecondRow1"  
-]</code>
+]
 
 
 ### Copy a column and paste it somewhere else
@@ -414,12 +414,12 @@ Returns 1 for successful and 0 for unsuccessful.
 
 Example:  
 POST localhost:9001/databases/myDatabase/tables/myOtherTable/columns/myPastedTable/paste  
-<code>{  
+{  
     "path": "/databases/myDatabase/tables/myTable/columns/myColumn"  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 
 ### Copy a table and paste it somewhere else
@@ -432,12 +432,12 @@ Returns 1 for successful and 0 for unsuccessful.
 
 Example:  
 POST localhost:9001/databases/myOtherDatabase/tables/myPastedTable/paste  
-<code>{  
+{  
     "path": "/databases/myDatabase/tables/myTable"  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 
 ### Copy a database and paste it somewhere else
@@ -450,12 +450,12 @@ Returns 1 for successful and 0 for unsuccessful.
 
 Example:  
 POST localhost:9001/databases/myPastedDatabase/paste  
-<code>{  
+{  
     "path": "/databases/myDatabase"  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 
 ### Rename a column
@@ -469,12 +469,12 @@ NOTE: You cannot have the column file open in file explorer during renaming.
 
 Example:  
 PATCH localhost:9001/databases/myDatabase/tables/myTable/columns/myColumnWithABadName  
-<code>{  
+{  
     "name": "myColumnWithABetterName"  
-}</code>
+}
 
 Response:
-<code>1</code>
+1
 
 
 ### Rename a table
@@ -488,12 +488,12 @@ NOTE: You cannot have the column file open in file explorer during renaming.
 
 Example:  
 PATCH localhost:9001/databases/myDatabase/tables/myTableWithABadName  
-<code>{  
+{  
     "name": "myTableWithABetterName"  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 
 ### Rename a database
@@ -507,12 +507,12 @@ NOTE: You cannot have the column file open in file explorer during renaming.
 
 Example:  
 PATCH localhost:9001/databases/myDatabaseWithABadName  
-<code>{  
+{  
     "name": "myDatabaseWithABetterName"  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 
 ### Get log data
@@ -526,7 +526,7 @@ Example:
 GET localhost:9001/log
 
 Response:  
-<code>Database loaded: myDatabase | 2020-07-30 13:19:59.497  
+Database loaded: myDatabase | 2020-07-30 13:19:59.497  
 Table loaded: myTable | 2020-07-30 13:19:59.496  
 Set index column of table myTable in database myDatabase to myColumn. | 2020-07-30 13:19:59.494  
 Loading column: mySecondColumn.txt | 2020-07-30 13:19:59.486  
@@ -534,7 +534,7 @@ Loading column: myColumn.txt | 2020-07-30 13:19:59.483
 Loading table: myTable | 2020-07-30 13:19:59.480  
 Added table myTable in database myDatabase. | 2020-07-30 13:19:59.478  
 Loading database: myDatabase | 2020-07-30 13:19:59.472  
-Added database myDatabase. | 2020-07-30 13:19:59.460</code>  
+Added database myDatabase. | 2020-07-30 13:19:59.460  
 
 
 ### Delete log data
@@ -548,7 +548,7 @@ Example:
 DELETE localhost:9001/log
 
 Response:  
-<code>1</code>
+1
 
 
 ### Exit zmdb
@@ -573,7 +573,7 @@ Example:
 GET localhost:9001/port
 
 Response:  
-<code>9001</code>
+9001
 
 
 ### Change the port
@@ -586,35 +586,35 @@ Returns 1 for successful and 0 for unsuccessful.
 
 Example:  
 PUT localhost:9001/port  
-<code>{  
+{  
     "number": 8080  
-}</code>
+}
 
 Response:  
-<code>1</code>
+1
 
 
 ## Column types
 If a number over- or under-flows, it wraps back to the MIN- or MAX-VALUE, respectively. Capitalization does matter.
 
-<code>"Boolean"</code>: a true or false value
+"Boolean": a true or false value
 
-<code>"String"</code>: a chain of characters, enclosed by double-quotes.
+"String": a chain of characters, enclosed by double-quotes.
 
-<code>"Integer"</code>: an integer number between -2147483648 to 2147483647.
+"Integer": an integer number between -2147483648 to 2147483647.
 
-<code>"Double"</code>: a decimal value between -1.7976931348623157e+308 and 1.7976931348623157e+308 (a really big number).
+"Double": a decimal value between -1.7976931348623157e+308 and 1.7976931348623157e+308 (a really big number).
 
-<code>"Float"</code>: a decimal value between -1 * (2-2-23)·2^127 and (2-2-23)·2^127 (a slightly smaller number).
+"Float": a decimal value between -1 * (2-2-23)·2^127 and (2-2-23)·2^127 (a slightly smaller number).
 
-<code>"Character"</code>: a character value, like 'c' or '&'.
+"Character": a character value, like 'c' or '&'.
 
-<code>"Byte"</code>: an integer value between -128 and 127.
+"Byte": an integer value between -128 and 127.
 
-<code>"Short"</code>: an integer value between -32,768 and 32,767.
+"Short": an integer value between -32,768 and 32,767.
 
-<code>"Long"</code>: an integer value between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.
+"Long": an integer value between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.
 
-<code>"UUID"</code>: a UUID formatted id (looks like 9e2e1203-5918-4d1e-8efc-d67de9b9a602)
+"UUID": a UUID formatted id (looks like 9e2e1203-5918-4d1e-8efc-d67de9b9a602)
 
-<code>"UUID-auto"</code>: auto-generates a unique UUID every time you make a row. You can enter any value in the "data" list for this row and it will be disregarded, but you have to include it.
+"UUID-auto": auto-generates a unique UUID every time you make a row. You can enter any value in the "data" list for this row and it will be disregarded, but you have to include it.
