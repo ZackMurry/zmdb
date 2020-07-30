@@ -9,12 +9,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * password encoding
  * put mapping
  * delete column by type
- * copying databases
- * maybe adding cutting and pasting too
  * make index rows unique
  * remove row by id from index column
  * maybe make index columns optional
  * copying all rows from one table to another
+ * get database/table/column names
+ * have @Index=OFF for turning index columns off
  */
 
 

@@ -108,7 +108,7 @@ public class DatabaseController {
         return databaseService.deleteRowByIndex(databaseName, tableName, index);
     }
 
-    @PostMapping("/databases/{databaseName}/tables/{tableName}/index")
+    @PutMapping("/databases/{databaseName}/tables/{tableName}/index")
     public int changeTableIndex(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @RequestBody ProtoString columnName) {
         return databaseService.changeTableIndex(databaseName, tableName, columnName.getName());
     }

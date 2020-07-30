@@ -18,6 +18,7 @@ public class Table implements Cloneable {
 
     private String databaseName;
 
+    private boolean hasIndexColumn = true;
     private int indexOfIndexColumn = 0; //todo require index columns to have all unique values (useful for searching values in tables)
 
     public Table(String name, Column<?>... columns) {
@@ -85,6 +86,14 @@ public class Table implements Cloneable {
     }
 
     public int addRow(ArrayList<Object> data, ArrayList<String> order) {
+        //making sure index columns don't contain duplicates
+        if(hasIndexColumn) {
+            if(containsRow(data, order)) {
+                ZmdbLogger.log("Cannot add duplicate rows to an index column.");
+                return 0;
+            }
+        }
+
         for(Column<?> column : columns) {
             int index = -1;
             for (int i = 0; i < order.size(); i++) {
@@ -189,9 +198,17 @@ public class Table implements Cloneable {
         if(columnName.isBlank()) {
             return 0;
         }
+        if(columnName.equals("OFF")) {
+            setHasIndexColumn(false);
+            return 1;
+        }
+
         for (int i = 0; i < columns.size(); i++) {
             if(columns.get(i).getName().equals(columnName)) {
+                ZmdbLogger.log("Set index column of table " + this.name + " in database " + databaseName + " to " + columnName + ".");
                 indexOfIndexColumn = i;
+                columns.get(i).setIndexColumn(true);
+                hasIndexColumn = true;
                 return 1;
             }
         }
@@ -200,6 +217,9 @@ public class Table implements Cloneable {
     }
 
     public String getIndexColumnName() {
+        if(!hasIndexColumn) {
+            return "OFF";
+        }
         return columns.get(indexOfIndexColumn).getName();
     }
 
@@ -216,6 +236,27 @@ public class Table implements Cloneable {
 
     public Object clone() throws CloneNotSupportedException{
         return super.clone();
+    }
+
+    public boolean hasIndexColumn() {
+        return hasIndexColumn;
+    }
+
+    public void setHasIndexColumn(boolean hasIndexColumn) {
+        if(hasIndexColumn) {
+            ZmdbLogger.log("Table.setHasIndexColumn() should only be used for disabling index columns.");
+            return;
+        }
+        ZmdbLogger.log("Disabled index columns for table " + this.name + " in database " + databaseName + ".");
+        this.hasIndexColumn = false;
+        indexOfIndexColumn = -1;
+        //finding the current index column and telling it that it is no longer an index column
+        for(Column<?> column : columns) {
+            if(column.isIndexColumn()) {
+                column.setIndexColumn(false);
+                return;
+            }
+        }
     }
 
 }

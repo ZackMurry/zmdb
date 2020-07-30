@@ -270,6 +270,7 @@ public class DatabaseService {
         return databaseDao.deleteRowByIndex(databaseName, tableName, intDex);
     }
 
+    //somehow accounts for "OFF" :)
     public int changeTableIndex(String databaseName, String tableName, String columnName) {
         if(FileEditor.changeTableIndex(databaseName, tableName, columnName) != 1) {
             return 0;

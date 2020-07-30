@@ -79,7 +79,7 @@ public class DataLoader {
 
                         String firstLine = FileReading.readFirstLine(columnFile); //getting the first line of columnFile (first line is where type info is stored)
 
-                        if (firstLine.contains("@Type=")) {
+                        if (firstLine.contains(FileEditor.TYPE_INDICATOR)) {
                             firstLine = firstLine.substring(6); //cut the @Type= off
                         } else {
                             ZmdbLogger.log("Error: first line of " + columnFile.getName() + " does not contain '@Type='");
@@ -113,7 +113,7 @@ public class DataLoader {
                     }
                     String indexColumnName = FileReading.readFirstLine(detailsFile).replace(FileEditor.INDEX_INDICATOR, "");
 
-                    if(!indexColumnName.equals("NULL")) databaseService.changeTableIndex(databaseFile.getName(), tableFile.getName(), indexColumnName);
+                    if(!indexColumnName.equals("NULL")) databaseService.changeTableIndex(databaseFile.getName(), tableFile.getName(), indexColumnName); //automatically accounts for "OFF"
 
                     ZmdbLogger.log("Table loaded: " + tableFile.getName());
 
