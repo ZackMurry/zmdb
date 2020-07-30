@@ -13,16 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- *
- * reserved words:
- *
- * contains
- * NULL
- * cannot contain '/'
- * must be at least one char
- * '.'
- */
+
 
 
 

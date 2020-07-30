@@ -29,6 +29,8 @@ public class DatabaseService {
     }
 
     public int addDatabase(Database database) {
+        if(isUnsafe(database.getName())) return 0;
+
         if(databaseDao.databaseExists(database.getName())) {
             ZmdbLogger.log("Cannot create database with name " + database.getName() + " because one already exists.");
             return 0;
@@ -44,10 +46,12 @@ public class DatabaseService {
      * include___ is for adding objects without creating files
      */
     public int includeDatabase(Database database) {
+        if(isUnsafe(database.getName())) return 0;
         return databaseDao.addDatabase(database);
     }
 
     public int addTable(Table table, String databaseName) {
+        if(isUnsafe(table.getName())) return 0;
         if(databaseDao.tableExists(databaseName, table.getName())) {
             ZmdbLogger.log("Cannot create table with name " + table.getName() + " in database " + databaseName + " because one already exists.");
             return 0;
@@ -59,6 +63,7 @@ public class DatabaseService {
     }
 
     public int includeTable(Table table, String databaseName) {
+        if(isUnsafe(table.getName())) return 0;
         return databaseDao.addTable(table, databaseName);
     }
 
@@ -83,7 +88,7 @@ public class DatabaseService {
     }
 
     public int addColumnToTable(String databaseName, String tableName, ProtoColumn protoColumn) {
-
+        if(isUnsafe(protoColumn.getName())) return 0;
         if(databaseDao.columnExists(databaseName, tableName, protoColumn.getName())) {
             ZmdbLogger.log("Unable to create column with name " + protoColumn.getName() + " in table " + tableName + " in database " + databaseName + " because one alredy exists.");
             return 0;
@@ -102,6 +107,7 @@ public class DatabaseService {
     }
 
     public int includeColumnInTable(String databaseName, String tableName, ProtoColumn protoColumn) {
+        if(isUnsafe(protoColumn.getName())) return 0;
         Optional<Column<?>> optionalColumn = buildColumn(protoColumn.getType(), databaseName, tableName, protoColumn.getName());
         if(optionalColumn.isEmpty()) {
             ZmdbLogger.log("Couldn't include column " + protoColumn.getName() + " in table " + tableName + " in database " + databaseName + " because the specified type doesn't exist or is not supported.");
@@ -119,7 +125,6 @@ public class DatabaseService {
      * @return returns the built column
      */
     public Optional<Column<?>> buildColumn(String type, String databaseName, String tableName, String name) {
-        System.out.println(type);
         switch(type) {
             case "Boolean":
                 return Optional.of(new Column<Boolean>(databaseName, tableName, name));
@@ -147,7 +152,6 @@ public class DatabaseService {
                 return Optional.empty();
         }
     }
-
 
     public int addRowToTable(String databaseName, String tableName, ArrayList<Object> data, ArrayList<String> order) {
         return databaseDao.addRowToTable(databaseName, tableName, data, order);
@@ -325,6 +329,8 @@ public class DatabaseService {
      * @return 1 for success, 0 for fail
      */
     public int copyPasteColumn(String databaseName, String tableName, String columnName, String copyFromPath) {
+        if(isUnsafe(columnName)) return 0;
+
         Optional<Column<?>> optionalColumn = databaseDao.getColumn(databaseName, tableName, columnName);
 
         //if i don't need to create a column (because it already exists)
@@ -352,7 +358,7 @@ public class DatabaseService {
         }
 
         //making a copy of the column
-        Column<?> copyFromColumn = null;
+        Column<?> copyFromColumn;
         try {
             copyFromColumn = (Column<?>) optionalColumn.get().clone();
         } catch (CloneNotSupportedException e) {
@@ -371,6 +377,7 @@ public class DatabaseService {
     }
 
     public int copyPasteTable(String databaseName, String tableName, String copyFromPath) {
+        if(isUnsafe(tableName)) return 0;
         //deleting the table at the paste location if it already exists
         if(FileReading.tableExists(databaseName, tableName)) {
             Optional<Table> optionalTable = databaseDao.getTable(databaseName, tableName);
@@ -393,7 +400,7 @@ public class DatabaseService {
         }
 
         //making a copy of the table
-        Table copyFromTable = null;
+        Table copyFromTable;
         try {
             copyFromTable = (Table) optionalTable.get().clone();
         } catch (CloneNotSupportedException e) {
@@ -416,7 +423,7 @@ public class DatabaseService {
     }
 
     public int copyPasteDatabase(String databaseName, String copyFromPath) {
-
+        if(isUnsafe(databaseName)) return 0;
         if(FileReading.databaseExists(databaseName)) {
             Optional<Database> optionalDatabase = databaseDao.getDatabaseByName(databaseName);
             if(optionalDatabase.isEmpty()) {
@@ -438,7 +445,7 @@ public class DatabaseService {
         }
 
         //making a copy of the database
-        Database copyFromDatabase = null;
+        Database copyFromDatabase;
         try {
             copyFromDatabase = (Database) optionalDatabase.get().clone();
         } catch (CloneNotSupportedException e) {
@@ -453,6 +460,7 @@ public class DatabaseService {
     }
 
     public int renameDatabase(String databaseName, String newDatabaseName) {
+        if(isUnsafe(newDatabaseName)) return 0;
         if(FileEditor.renameDatabaseFile(databaseName, newDatabaseName) != 1) {
             ZmdbLogger.log("Unable to rename the file for database " + databaseName + " for some reason.");
             return 0;
@@ -461,6 +469,7 @@ public class DatabaseService {
     }
 
     public int renameTable(String databaseName, String tableName, String newTableName) {
+        if(isUnsafe(newTableName)) return 0;
         if(FileEditor.renameTableFile(databaseName, tableName, newTableName) != 1) {
             ZmdbLogger.log("Unable to rename the file for table " + tableName + " in database " + databaseName + " for some reason.");
             return 0;
@@ -469,6 +478,7 @@ public class DatabaseService {
     }
 
     public int renameColumn(String databaseName, String tableName, String columnName, String newColumnName) {
+        if(isUnsafe(newColumnName)) return 0;
         if(FileEditor.renameColumnFile(databaseName, tableName, columnName, newColumnName) != 1) {
             ZmdbLogger.log("Unable to rename the file for column " + columnName + " in table " + tableName + "  in database " + databaseName + " for some reason.");
             return 0;
@@ -476,4 +486,65 @@ public class DatabaseService {
         return databaseDao.renameColumn(databaseName, tableName, columnName, newColumnName);
     }
 
+    /**
+     * checks if a string contains reserved words/chars
+     * @return true if fine, else false
+     */
+    public static boolean isUnsafe(String string) {
+
+        if(string.contains("/") || string.contains(".")) {
+            ZmdbLogger.log("Input cannot contain '.' or '/'. Please rename " + string + " and try again.");
+            return true;
+        }
+
+        switch(string) {
+
+            case "contains":
+            case "NULL":
+            case "index":
+            case "paste":
+            case "rows":
+            case "count":
+            case "OFF":
+                break;
+            default:
+                return false;
+        }
+
+        ZmdbLogger.log("Error: " + string + " contains a reserved character is a reserved word. Please change it and try again.");
+        return true;
+
+    }
+
+    public ArrayList<ArrayList<Object>> getRowByIndexColumn(String databaseName, String tableName, Object value) {
+        Optional<Table> optionalTable = databaseDao.getTable(databaseName, tableName);
+        ArrayList<Object> emptyObjectArrayList = new ArrayList<>();
+        ArrayList<ArrayList<Object>> emptyArrayListList = new ArrayList<>();
+        emptyArrayListList.add(emptyObjectArrayList);
+        if(optionalTable.isEmpty()) {
+            ZmdbLogger.log("Cannot get row from table " + tableName + " in database " + databaseName + " because it doesn't exist.");
+            return emptyArrayListList;
+        }
+        Table table = optionalTable.get();
+        Optional<Column<?>> optionalIndexColumn = table.getIndexColumn();
+        if(optionalIndexColumn.isEmpty()) {
+            ZmdbLogger.log("Cannot get row by index column from table " + tableName + "in database " + databaseName + " because it does not have an index column.");
+            return emptyArrayListList;
+        }
+        Column<?> indexColumn = optionalIndexColumn.get();
+        int rowIndex = indexColumn.getIndexOfItem(value);
+        if(rowIndex < 0) {
+            return emptyArrayListList;
+        }
+
+        Optional<ArrayList<ArrayList<Object>>> optionalArrayListList = table.getRowByIndex(rowIndex); //yikes. see documentation for table.getRowByIndex
+
+        if(optionalArrayListList.isEmpty()) {
+            ZmdbLogger.log("Error getting row from " + tableName + " in database " + databaseName + " from index " + rowIndex + ".");
+            return emptyArrayListList;
+        }
+
+        return optionalArrayListList.get();
+
+    }
 }

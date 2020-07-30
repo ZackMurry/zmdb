@@ -1,11 +1,8 @@
 package com.zackmurry.zmdb.controller;
 
-import com.zackmurry.zmdb.controller.proto.ProtoRequestPath;
-import com.zackmurry.zmdb.controller.proto.ProtoRow;
-import com.zackmurry.zmdb.controller.proto.ProtoString;
+import com.zackmurry.zmdb.controller.proto.*;
 import com.zackmurry.zmdb.entities.Column;
 import com.zackmurry.zmdb.entities.Database;
-import com.zackmurry.zmdb.controller.proto.ProtoColumn;
 import com.zackmurry.zmdb.entities.Table;
 import com.zackmurry.zmdb.services.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,5 +165,9 @@ public class DatabaseController {
         return databaseService.renameColumn(databaseName, tableName, columnName, protoString.getName());
     }
 
+    @GetMapping("/databases/{databaseName}/tables/{tableName}/rows")
+    public ArrayList<ArrayList<Object>> getRowByIndexColumn(@PathVariable("databaseName") String databaseName, @PathVariable("tableName") String tableName, @RequestBody ProtoValue protoValue) {
+        return databaseService.getRowByIndexColumn(databaseName, tableName, protoValue.getValue());
+    }
 
 }

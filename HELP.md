@@ -594,6 +594,27 @@ Response:
 1
 
 
+### Get row by item in index column
+
+#### GET request to /databases/{databaseName}/tables/{tableName}/rows
+Takes a JSON object with an attribute called "value", which contains the value of item you're looking for.
+
+Returns a list with two lists in it. The first is a list of the items from the row that you were trying to get. The second is the order of the columns that the first list provided.
+Returns a list with two empty lists in it if the row couldn't be found. Check logs for the reason why.
+
+Example:  
+GET localhost:9001/databases/myDatabase/tables/myTable/rows  
+{
+    "value": "indexRow4"  
+}
+
+Response:  
+[  
+    ["indexRow4", "otherRow4"],  
+    ["myIndexColumn", "myOtherColumn"]  
+]
+
+
 ## Column types
 If a number over- or under-flows, it wraps back to the MIN- or MAX-VALUE, respectively. Capitalization does matter.
 

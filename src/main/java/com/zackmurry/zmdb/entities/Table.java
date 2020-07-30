@@ -259,4 +259,42 @@ public class Table implements Cloneable {
         }
     }
 
+    public Optional<Column<?>> getIndexColumn() {
+        if(!hasIndexColumn || columns.size() == 0) {
+            return Optional.empty();
+        }
+        return columns.stream().filter(Column::isIndexColumn).findFirst();
+    }
+
+    /**
+     *
+     * @param index index of the row to get
+     * @return an optional array list of array lists of objects. The outer-most arraylist only has two arraylists in it; the first is the values and the second is the order
+     */
+    public Optional<ArrayList<ArrayList<Object>>> getRowByIndex(int index) {
+        if(columns.size() == 0 || index > columns.get(0).getNumberOfRows()-1) {
+            ZmdbLogger.log("Cannot get row from index " + index + " of table " + name + " in database " + databaseName + " because the index is out of bounds for the column or row size.");
+            return Optional.empty();
+        }
+
+        ArrayList<Object> values = new ArrayList<>();
+        ArrayList<Object> order = new ArrayList<>();
+        for(Column<?> column : columns) {
+            if(column.getNumberOfRows()-1<index) {
+                ZmdbLogger.log("Cannot get row from index " + index + " of table " + name + " in database " + databaseName + " because column " + column.getName() + " doesn't have that many rows.");
+                return Optional.empty();
+            }
+            values.add(column.getItemFromRow(index));
+            order.add(column.getName());
+        }
+
+        ArrayList<ArrayList<Object>> out = new ArrayList<>();
+        out.add(values);
+        out.add(order);
+
+        if(out.get(0).size() == 0) return Optional.empty();
+        return Optional.of(out);
+
+    }
+
 }

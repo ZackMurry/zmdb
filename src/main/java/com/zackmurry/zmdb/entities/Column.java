@@ -178,7 +178,15 @@ public class Column<T> implements Cloneable {
      * @apiNote requires this column to be an index column
      * @return -1 for not an index column or item not found, else index of row that the item belongs to
      */
-    public int getIndexOfItem(T item) {
+    public int getIndexOfItem(Object item) {
+        try{
+            T TItem = (T) item;
+        } catch (Exception e)  {
+            ZmdbLogger.log("Error: cannot convert " + item + "to the appropriate type");
+            e.printStackTrace();
+            return -1;
+        }
+
         if(!isIndexColumn) {
             ZmdbLogger.log("You can only find the index of a single item if the column you are looking in is an index column.");
             return -1;
