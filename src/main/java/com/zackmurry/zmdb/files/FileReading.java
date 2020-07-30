@@ -91,7 +91,6 @@ public class FileReading {
     public static int readIntFromIndex(File file, String index) {
         String[] lines = getFileLines(file);
         for(String line : lines) {
-            System.out.println(line);
             if(line.startsWith(index)) {
                 line = line.replace(index,"");
                 try{

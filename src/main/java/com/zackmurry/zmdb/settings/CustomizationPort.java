@@ -24,12 +24,13 @@ public class CustomizationPort implements WebServerFactoryCustomizer<Configurabl
     @Override
     public void customize(ConfigurableServletWebServerFactory server) {
         PORT = FileReading.readIntFromIndex(new File("settings.txt"), FileEditor.PORT_INDICATOR); //throws an error if there's no settings.txt file, but that fixes itself
-        System.out.println("PORT: " + PORT);
+        ZmdbLogger.log("PORT: " + PORT);
         if(PORT != -1) {
             server.setPort(PORT);
         }
         else {
-            System.out.println("bruh");
+            ZmdbLogger.log("Error setting/reading port from settings.txt. Setting port to 9001.");
+            server.setPort(DEFAULT_PORT);
         }
     }
 
