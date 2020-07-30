@@ -384,6 +384,10 @@ public class FileEditor {
         File[] files = file.listFiles();
         if(files != null) {
             for (File subdir : files) {
+                if(subdir.getName().equals("details.txt")) {
+                    setIndexOfTable(subdir, "NULL"); //clearing the index column
+                    continue;
+                }
                 if(deleteFolder(subdir) != 1) return 0;
             }
         }

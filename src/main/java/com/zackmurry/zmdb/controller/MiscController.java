@@ -2,7 +2,9 @@ package com.zackmurry.zmdb.controller;
 
 import com.zackmurry.zmdb.controller.proto.ProtoInteger;
 import com.zackmurry.zmdb.files.FileEditor;
+import com.zackmurry.zmdb.files.FileReading;
 import com.zackmurry.zmdb.services.EnvironmentService;
+import com.zackmurry.zmdb.tools.ZmdbLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +22,17 @@ public class MiscController {
         return FileEditor.silentRemoveAllTextFromFile(new File("log.txt"));
     }
 
+    @GetMapping("/log")
+    public String getLogData() {
+        return FileReading.readLogData();
+    }
+
     /**
      * closes application. will not return a response as it's dead.
      */
     @GetMapping("/exit")
     public void exitApplication() {
+        ZmdbLogger.log("Exited.");
         System.exit(0);
     }
 

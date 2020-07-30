@@ -119,6 +119,7 @@ public class DatabaseService {
      * @return returns the built column
      */
     public Optional<Column<?>> buildColumn(String type, String databaseName, String tableName, String name) {
+        System.out.println(type);
         switch(type) {
             case "Boolean":
                 return Optional.of(new Column<Boolean>(databaseName, tableName, name));

@@ -140,4 +140,20 @@ public class FileReading {
         }
         return readFirstLine(detailsFile).replace(FileEditor.INDEX_INDICATOR, "");
     }
+
+    public static String readLogData() {
+        File logFile = new File("log.txt");
+        if(!logFile.exists()) {
+            return "Unable to get log file.";
+        }
+
+        String[] lines = getFileLines(logFile);
+        StringBuilder outBuilder = new StringBuilder();
+
+        for(String line : lines) {
+            outBuilder.append(line).append("\n");
+        }
+        return outBuilder.toString();
+    }
+
 }
