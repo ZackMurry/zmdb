@@ -89,6 +89,7 @@ public class FileReading {
      * @return the integer it finds. if none, -1;
      */
     public static int readIntFromIndex(File file, String index) {
+        if(!file.exists()) return -1;
         String[] lines = getFileLines(file);
         for(String line : lines) {
             if(line.startsWith(index)) {
