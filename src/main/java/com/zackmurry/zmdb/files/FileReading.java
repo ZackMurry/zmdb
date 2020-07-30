@@ -127,6 +127,11 @@ public class FileReading {
         return tableFile.exists();
     }
 
+    public static boolean databaseExists(String databaseName) {
+        File databaseFile = new File("data/databases/" + databaseName);
+        return databaseFile.exists();
+    }
+
     public static String getTableIndexColumn(String databaseName, String tableName) {
         File detailsFile = new File("data/databases/" + databaseName + "/" + tableName + "/details.txt");
         if(!detailsFile.exists()) {

@@ -21,7 +21,7 @@ import java.util.Optional;
  * NULL
  * cannot contain '/'
  * must be at least one char
- *
+ * '.'
  */
 
 

@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * make index rows unique
  * remove row by id from index column
  * maybe make index columns optional
+ * copying all rows from one table to another
  */
 
 

@@ -1,6 +1,7 @@
 package com.zackmurry.zmdb.files;
 
 import com.zackmurry.zmdb.entities.Column;
+import com.zackmurry.zmdb.entities.Database;
 import com.zackmurry.zmdb.entities.Table;
 import com.zackmurry.zmdb.tools.ZmdbLogger;
 import com.zackmurry.zmdb.controller.proto.ProtoRow;
@@ -439,7 +440,7 @@ public class FileEditor {
     }
 
     /**
-     *
+     * todo this could definitely be cleaner
      * @param databaseName database to create file in
      * @param tableName table to create file in
      * @param columnName name of columnFile
@@ -486,6 +487,7 @@ public class FileEditor {
         return 1;
     }
 
+    //todo see if i actually need a table as a parameter (could get originalTableFile details from table)
     public static int newTableFileFromTableObject(String databaseName, String tableName, Table table, File originalTableFile) {
         File tableFile = new File("data/databases/" + databaseName + "/" + tableName);
         if(tableFile.exists()) {
@@ -521,6 +523,83 @@ public class FileEditor {
         }
 
         return 1;
+    }
+
+    /**
+     * @param newDatabaseName what to name the new database
+     * @param copyFromDatabase database to copy from
+     * @return 1 for success, 0 for fail
+     */
+    public static int copyPasteDatabase(String newDatabaseName, Database copyFromDatabase) {
+        File copyFromFile = new File("data/databases/" + copyFromDatabase.getName());
+        if(!copyFromFile.exists()) {
+            ZmdbLogger.log("Unable to find file for database " + copyFromDatabase.getName() + ".");
+            return 0;
+        }
+
+        File newDatabaseFile = new File("data/databases/" + newDatabaseName);
+        if(newDatabaseFile.exists()) {
+            if(!newDatabaseFile.delete()) {
+                ZmdbLogger.log("Unable to delete file for database " + newDatabaseName + " to paste new information there.");
+                return 0;
+            }
+        }
+
+        if(!newDatabaseFile.mkdir()) {
+            ZmdbLogger.log("Unable to make directory for database " + newDatabaseName + ".");
+            return 0;
+        }
+
+        File[] tableFiles = copyFromFile.listFiles();
+
+        //if there's nothing in the database, we're done
+        if(tableFiles == null) {
+            return 1;
+        }
+
+        int out = 1;
+
+        for(File tableFile : tableFiles) {
+            String tableName = tableFile.getName();
+            if(!(new File("data/databases/" + newDatabaseName + "/" + tableName).mkdir())) {
+                ZmdbLogger.log("Unable to create a file for table " + tableFile.getName() + ". Continuing with the paste.");
+                out = 0;
+                continue;
+            }
+            File[] columnFiles = tableFile.listFiles();
+            if(columnFiles == null) {
+                //there should be at least a details file, so this probably won't happen unless the user manually deletes/adds something
+                ZmdbLogger.log("Unable to find column files for table " + tableFile.getName() + ". Continuing with the paste.");
+                out = 0;
+                continue;
+            }
+
+            //column files could also be the details.txt file
+            for(File columnFile : columnFiles) {
+                String columnName = columnFile.getName().replace(".txt", "");
+                File newColumnFile = new File("data/databases/" + newDatabaseName + "/" + tableName + "/" + columnName + ".txt");
+                if(!newColumnFile.mkdir()) {
+                    ZmdbLogger.log("Unable to create a file for column " + columnName + " in table " + tableName + ". Continuing with the paste.");
+                    out = 0;
+                    continue;
+                }
+                Path oldColumnPath = Paths.get(columnFile.getPath());
+                Path newColumnPath = Paths.get(newColumnFile.getPath());
+                try {
+                    Files.copy(
+                            oldColumnPath,
+                            newColumnPath,
+                            StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    ZmdbLogger.log("Unable to paste column " + columnName + ". Continuing the paste.");
+                    out = 0;
+                }
+
+            }
+        }
+        return out;
+
     }
 
     public static int renameDatabaseFile(String databaseName, String newDatabaseName) {

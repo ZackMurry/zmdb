@@ -323,19 +323,20 @@ public class DatabaseService {
      * @return 1 for success, 0 for fail
      */
     public int copyPasteColumn(String databaseName, String tableName, String columnName, String copyFromPath) {
+        Optional<Column<?>> optionalColumn = databaseDao.getColumn(databaseName, tableName, columnName);
+
         //if i don't need to create a column (because it already exists)
         if(FileReading.columnExists(databaseName, tableName, columnName)) {
             //just delete the target column and move on bc why would i change the file name and replace all the text when i could just
             //delete it and move on like normal:)
-            Optional<Column<?>> optionalColumn = databaseDao.getColumn(databaseName, tableName, columnName);
+
             if(optionalColumn.isEmpty()) {
                 //this would mean that the arraylist doesn't have a column but the file path does
                 ZmdbLogger.log("Error: files and internal data out of sync. Please restart.");
                 return 0;
             }
-            databaseDao.deleteColumnByName(databaseName, tableName, columnName);
-
-            FileEditor.deleteColumnFile(databaseName, tableName, columnName);
+            if(databaseDao.deleteColumnByName(databaseName, tableName, columnName) != 1) return 0;
+            if(FileEditor.deleteColumnFile(databaseName, tableName, columnName) != 1) return 0;
         }
 
         String copyFromDatabaseName = RequestPathHelper.getDatabaseNameFromRequestPath(copyFromPath);
@@ -343,11 +344,12 @@ public class DatabaseService {
         String copyFromColumnName = RequestPathHelper.getColumnNameFromRequestPath(copyFromPath, copyFromDatabaseName, copyFromTableName);
 
         //this is the column that is being copied
-        Optional<Column<?>> optionalColumn = databaseDao.getColumn(copyFromDatabaseName, copyFromTableName, copyFromColumnName);
         if(optionalColumn.isEmpty()) {
             ZmdbLogger.log("Unable to find column " + columnName + " in table " + copyFromTableName + " in database " + copyFromDatabaseName + ". Retrieved from path " + copyFromPath + ".");
             return 0;
         }
+
+        //making a copy of the column
         Column<?> copyFromColumn = null;
         try {
             copyFromColumn = (Column<?>) optionalColumn.get().clone();
@@ -355,9 +357,13 @@ public class DatabaseService {
             e.printStackTrace();
             return 0;
         }
-        copyFromColumn.setName(columnName); //changes name of file because we're copying the data, not exactly the name
+
+        //configuring the copy
+        copyFromColumn.setName(columnName);
         copyFromColumn.setTableName(tableName);
         copyFromColumn.setDatabaseName(databaseName);
+
+        //adding the new column to the arraylist and the files
         databaseDao.addColumnToTable(databaseName, tableName, copyFromColumn);
         return FileEditor.newColumnFileFromColumnObject(databaseName, tableName, columnName, copyFromColumn, FileReading.getTypeFromColumn(copyFromDatabaseName, copyFromTableName, copyFromColumnName));
     }
@@ -371,8 +377,8 @@ public class DatabaseService {
                 ZmdbLogger.log("Error: files and internal data out of sync. Please restart.");
                 return 0;
             }
-            databaseDao.deleteTableByName(databaseName, tableName);
-            FileEditor.deleteTableFile(databaseName, tableName);
+            if(databaseDao.deleteTableByName(databaseName, tableName) != 1) return 0;
+            if(FileEditor.deleteTableFile(databaseName, tableName) != 1) return 0;
         }
 
         String copyFromDatabaseName = RequestPathHelper.getDatabaseNameFromRequestPath(copyFromPath);
@@ -380,10 +386,11 @@ public class DatabaseService {
 
         Optional<Table> optionalTable = databaseDao.getTable(copyFromDatabaseName, copyFromTableName);
         if(optionalTable.isEmpty()) {
-            ZmdbLogger.log("Unable to find table " + tableName + " in database " + copyFromDatabaseName + ". Retrieved from path " + copyFromPath);
+            ZmdbLogger.log("Unable to find table " + tableName + " in database " + copyFromDatabaseName + ". Retrieved from path " + copyFromPath + ".");
             return 0;
         }
 
+        //making a copy of the table
         Table copyFromTable = null;
         try {
             copyFromTable = (Table) optionalTable.get().clone();
@@ -393,11 +400,10 @@ public class DatabaseService {
         }
 
         copyFromTable.setName(tableName);
+        copyFromTable.setDatabaseName(databaseName);
         for(Column<?> column : copyFromTable.getAllColumns()) {
-            column.setDatabaseName(databaseName);
             column.setTableName(tableName);
         }
-        databaseDao.getTablesFromDatabase(databaseName).forEach(table -> System.out.println(table.getName()));
 
         if(databaseDao.addTable(copyFromTable, databaseName) != 1) return 0;
         return FileEditor.newTableFileFromTableObject(
@@ -405,6 +411,43 @@ public class DatabaseService {
                 tableName,
                 copyFromTable,
                 new File("data/databases/" + copyFromDatabaseName + "/" + copyFromTableName));
+    }
+
+    public int copyPasteDatabase(String databaseName, String copyFromPath) {
+
+        if(FileReading.databaseExists(databaseName)) {
+            Optional<Database> optionalDatabase = databaseDao.getDatabaseByName(databaseName);
+            if(optionalDatabase.isEmpty()) {
+                ZmdbLogger.log("Error: files and internal data out of sync. Please restart.");
+                return 0;
+            }
+
+            if(databaseDao.deleteDatabaseByName(databaseName) != 1) return 0;
+            if(FileEditor.deleteDatabaseFile(databaseName) != 1) return 0;
+        }
+
+        String copyFromDatabaseName = RequestPathHelper.getDatabaseNameFromRequestPathWithoutFinalSlash(copyFromPath);
+
+        Optional<Database> optionalDatabase = databaseDao.getDatabaseByName(copyFromDatabaseName);
+
+        if(optionalDatabase.isEmpty()) {
+            ZmdbLogger.log("Unable to find database " + copyFromDatabaseName + ". Retrieved from path " + copyFromPath + ".");
+            return 0;
+        }
+
+        //making a copy of the database
+        Database copyFromDatabase = null;
+        try {
+            copyFromDatabase = (Database) optionalDatabase.get().clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+        if(FileEditor.copyPasteDatabase(databaseName, copyFromDatabase) != 1) return 0;
+
+        copyFromDatabase.setName(databaseName); //sets database name for its children too:)
+        return databaseDao.addDatabase(copyFromDatabase);
     }
 
     public int renameDatabase(String databaseName, String newDatabaseName) {

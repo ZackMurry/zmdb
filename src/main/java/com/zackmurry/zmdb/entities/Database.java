@@ -23,6 +23,10 @@ public class Database implements Cloneable {
 
     public void setName(String name) {
         this.name = name;
+        for(Table table : tables) {
+            table.setDatabaseName(name);
+        }
+
     }
 
     public void addTable(Table table) {
@@ -54,6 +58,8 @@ public class Database implements Cloneable {
         return tables.stream().filter(table -> table.getName().equals(tableName)).findFirst();
     }
 
-
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
+    }
 
 }

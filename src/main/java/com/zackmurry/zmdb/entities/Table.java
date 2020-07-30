@@ -71,6 +71,9 @@ public class Table implements Cloneable {
 
     public void setName(String name) {
         this.name = name;
+        for(Column<?> column : columns) {
+            column.setTableName(name);
+        }
     }
 
     public boolean nameIs(String name) {
@@ -206,6 +209,9 @@ public class Table implements Cloneable {
 
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
+        for(Column<?> column : columns) {
+            column.setDatabaseName(databaseName);
+        }
     }
 
     public Object clone() throws CloneNotSupportedException{
