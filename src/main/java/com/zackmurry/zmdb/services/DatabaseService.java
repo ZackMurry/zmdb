@@ -492,13 +492,12 @@ public class DatabaseService {
      */
     public static boolean isUnsafe(String string) {
 
-        if(string.contains("/") || string.contains(".")) {
+        if(string.contains("/") || string.contains(".") || string.contains(" ")) {
             ZmdbLogger.log("Input cannot contain '.' or '/'. Please rename " + string + " and try again.");
             return true;
         }
 
         switch(string) {
-
             case "contains":
             case "NULL":
             case "index":

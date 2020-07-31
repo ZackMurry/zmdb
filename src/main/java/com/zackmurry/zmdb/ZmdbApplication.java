@@ -4,6 +4,9 @@ import com.zackmurry.zmdb.files.DataLoader;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.net.HttpURLConnection;
+import java.net.http.HttpClient;
+
 /**
  * not done:
  * password encoding
@@ -15,6 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * copying all rows from one table to another
  * get database/table/column names
  * have @Index=OFF for turning index columns off
+ * .jar creates a file in downloads:(
  */
 
 

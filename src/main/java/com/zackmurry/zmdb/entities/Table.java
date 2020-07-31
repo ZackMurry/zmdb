@@ -36,6 +36,9 @@ public class Table implements Cloneable {
 
     public void addColumn(Column<?> column) {
         this.columns.add(column);
+        if(columns.size() == 1 && hasIndexColumn) {
+            setIndexColumn(column.getName());
+        }
     }
 
     public List<Column<?>> getAllColumns() {
