@@ -10,4 +10,4 @@ Download an HTTP request sender to start out (like Postman). You can make your f
 "name": "myFirstDatabase"  
 }  
 
-This will create a database with name "myFirstDatabase". You can find further documentation in the HELP.md file.
+This will create a database with name "myFirstDatabase". You can find further documentation in the [HELP.md](HELP.md) file.
